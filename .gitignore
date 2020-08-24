@@ -2,3 +2,6 @@
 
 # Node dependencies
 node_modules/*
+
+# Generated AsyncAPI output
+test/output/*
