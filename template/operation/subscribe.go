@@ -12,7 +12,7 @@ type Consumer interface {
 	// in the param.{{opName}}Params. It is bound to the following channel:
 	//
 	// SUBSCRIBE: {{ch_name}} 
-	func {{ ch.subscribe().id() | toGoPublicID }}(params param.{{opName}}Params, fn {{msgName}}Handler)
+	func {{ ch.subscribe().id() | toGoPublicID }}(params channel.{{opName}}Params, fn {{msgName}}Handler)
 
 	{%- endif -%}
 {% endfor %}

@@ -17,6 +17,6 @@ package operation
 
 {#- TODO:: How to avoid duplicating message handler identifiers? -#}
 // {{ msgName -}}Handler defines how to handle an incoming {{msgName}} message.
-type func {{ msgName }}Handler(params params.{{ opName }}Params, msg message.{{msgName}})	
+type func {{ msgName }}Handler(params channel.{{ opName }}Params, msg message.{{msgName}})	
 
 {% endfor -%}

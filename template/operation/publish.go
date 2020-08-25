@@ -12,7 +12,7 @@ type Producer interface {
 	// in the param.{{opName}}Params. It is bound to the following channel:
 	//
 	// PUBLISH: {{ch_name}} 
-	func {{ ch.publish().id() | toGoPublicID }}(params param.{{opName}}Params, msg message.{{msgName}})
+	func {{ ch.publish().id() | toGoPublicID }}(params channel.{{opName}}Params, msg message.{{msgName}})
 
 	{%- endif -%}
 {% endfor %}
