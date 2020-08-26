@@ -4,21 +4,26 @@
 package model
 
 // {{ modelName }} is a Schema defined in the AsyncAPI specification
-type {{ modelName }} {{ defineGoType(schema) }}
+// TODO: Support custom tags
+type {{ modelName }} {{ defineGoType(schema, "json") }}
 
 func New{{ modelName }}(
 {%- set counter = 0 %}
 {%- for propertyName, property in schema.properties() %}
     {%- if schema.required() | includes(propertyName) -%}
-        {{ propertyName }} {{ getGoType(property)  }}
-        {% if counter != schema.properties().length %}, {% endif %}
-    {%- set counter = counter +1 %}
+        {{ propertyName | toGoPrivateID }} {{ getGoType(property)  -}}
+        {{schema.properties().length}}
+        {%- if counter + 4 < schema.properties() | length %}, {% endif %}
+    {%- set counter = counter + 1 %}
     {%- endif %}
 {%- endfor %}) *{{ modelName }} {
 
+    return &{{ modelName }}{  
 {%- for propertyName, property in schema.properties() %}
-    {%- if property.required()%}
-        this.{{ propertyName }}={{ propertyName }};
+      
+    {%- if schema.required() | includes(propertyName) %}
+        {{ propertyName | toGoPublicID }}: {{ propertyName | toGoPrivateID }}, 
     {%- endif %}
 {%- endfor %}
+    }
 }
