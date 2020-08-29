@@ -66,3 +66,16 @@ exports.toChannelRegex = (ch, cap) => {
     return ch.replace(regex, captureGroup)
 }
 
+
+exports.orderedParamNames = (ch) => {
+    // const regex = /\{(.+)\}/g
+    const regex = exports.toChannelRegex(ch)
+    const matches = ch.match(regex)
+
+    let paramNames = []
+    // Skip the first match (the full matching string)
+    // Strip the braces from each matchgroup
+    matches.slice(1).forEach(mg => { paramNames.push(mg) })
+
+    return paramNames
+}
