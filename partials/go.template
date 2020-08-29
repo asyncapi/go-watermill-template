@@ -71,7 +71,7 @@ Output: instantiation of a binding.{{protocol}} operation bindings struct
 #}
 {% macro getOpBinding(protocol, binding) %}
     {% if protocol == "mqtt5" -%}
-        var {{ protocol }}Bindings = map[string]string {
+        var {{ protocol }}Bindings = map[string]interface{} {
             {%- if binding.qos -%}"qos": {{- binding.qos -}},{%- endif %}
             {%- if binding.retain -%}"retain": {{- binding.retain -}},{%- endif -%}
             {%- if binding.bindingVersion -%} "bindingVersion": "{{ binding.bindingVersion }}",{%- endif -%}
@@ -79,7 +79,7 @@ Output: instantiation of a binding.{{protocol}} operation bindings struct
     {% endif -%}
 
     {%- if protocol == "kafka" -%}
-        var {{ opName }}Kafka = map[string]string {
+        var {{ protocol }}Bindings = map[string]interface{} {
             {%- if binding.groupId -%} "groupID": "{{- binding.groupId -}}",{%- endif -%}
             {%- if binding.clientId -%} "clientID": "{{- binding.clientId -}}",{%- endif -%}
             {%- if binding.bindingVersion -%} "bindingVersion": "{{- binding.bindingVersion -}}",{%- endif -%}
