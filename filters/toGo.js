@@ -59,3 +59,10 @@ exports.toGoPublicID = (id) => {
 exports.toGoPrivateID = (id) => {
     return camelCase(id)
 }
+
+exports.toChannelRegex = (ch, cap) => {
+    const regex = /\{(.+?)\}/g
+    const captureGroup = cap ? cap : "(.+)"
+    return ch.replace(regex, captureGroup)
+}
+
