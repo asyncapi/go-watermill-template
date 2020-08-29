@@ -86,3 +86,26 @@ Output: instantiation of a binding.{{protocol}} operation bindings struct
         }
     {%- endif -%}
 {%- endmacro %}
+
+{# defineOperationParams(schema)
+
+Input: 
+    op - A channel operation [e.g ch.publish() | ch.subscribe() ]
+    params - the channel params [e.g ch.parameters() ]
+
+Output: a struct definition containing the each of the channel parameters
+        used by the operation. Each parameter is defined as its associated 
+        Go type with an identifer matching the parameter name converted to 
+        UpperCamelCase. Comments are pulled from parameter description
+#}
+{%- macro defineOperationParams(op, params) %}
+{%- set opName = op.id() | toGoPublicID -%}
+{%- set msgName = messageName(op.message()) %}
+// {{opName}}Params holds the channel parameters used by the {{opName}} operation
+type {{opName}}Params = struct {
+	{%- for param_name, param in params %}
+	// {{ param_name | toGoPublicID }} is {{ param.description() | lowerFirst }}
+	{{ param_name | toGoPublicID }} {{ getGoType(param.schema()) }}
+	{%- endfor %}
+}
+{%- endmacro %}
