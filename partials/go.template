@@ -71,18 +71,18 @@ Output: instantiation of a binding.{{protocol}} operation bindings struct
 #}
 {% macro getOpBinding(protocol, binding) %}
     {% if protocol == "mqtt5" -%}
-        var {{ protocol }}Bindings = binding.MQTT5 {
-            {%- if binding.qos -%}QoS: {{- binding.qos -}},{%- endif %}
-            {%- if binding.retain -%}Retain: {{- binding.retain -}},{%- endif -%}
-            {%- if binding.bindingVersion -%} BindingVersion: "{{ binding.bindingVersion }}",{%- endif -%}
+        var {{ protocol }}Bindings = map[string]string {
+            {%- if binding.qos -%}"qos": {{- binding.qos -}},{%- endif %}
+            {%- if binding.retain -%}"retain": {{- binding.retain -}},{%- endif -%}
+            {%- if binding.bindingVersion -%} "bindingVersion": "{{ binding.bindingVersion }}",{%- endif -%}
         }
     {% endif -%}
 
     {%- if protocol == "kafka" -%}
-        var {{ opName }}Kafka = binding.Kafka {
-            {%- if binding.groupId -%} GroupID: "{{- binding.groupId -}}",{%- endif -%}
-            {%- if binding.clientId -%} ClientID: "{{- binding.clientId -}}",{%- endif -%}
-            {%- if binding.bindingVersion -%} BindingVersion: "{{- binding.bindingVersion -}}",{%- endif -%}
+        var {{ opName }}Kafka = map[string]string {
+            {%- if binding.groupId -%} "groupID": "{{- binding.groupId -}}",{%- endif -%}
+            {%- if binding.clientId -%} "clientID": "{{- binding.clientId -}}",{%- endif -%}
+            {%- if binding.bindingVersion -%} "bindingVersion": "{{- binding.bindingVersion -}}",{%- endif -%}
         }
     {%- endif -%}
 {%- endmacro %}
