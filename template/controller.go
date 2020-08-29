@@ -1,9 +1,11 @@
-{%- from "../../partials/go.template" import messageName -%}
-{%- from "../../partials/go.template" import getOpBinding -%}
+{%- from "../partials/go.template" import messageName -%}
+{%- from "../partials/go.template" import getOpBinding -%}
 package asyncapi
 
+import "transport"
+
 type Controller {
-	async transport.PubSub
+	Transport transport.PubSub
 
 	contentWriters map[string]content.Writer
 	contentReaders map[string]content.Reader
@@ -43,7 +45,7 @@ func (c Controller) {{ ch.publish().id() | toGoPublicID }}(params channel.{{opNa
 	}
 
 	// Publish the underlying transport.Message with the transport layer
-	return c.async.Publish(params.Build(), mag.Message{{bindingList}})
+	return c.Transport.Publish(params.Build(), mag.Message{{bindingList}})
 }
 
 	{% else  -%}
@@ -75,7 +77,7 @@ func (c Controller) {{ ch.subscribe().id() | toGoPublicID }}(params channel.{{op
 
 	// Subscribe with the transport layer. Wrap message handler /w logic to decode 
 	// transport.Message payload into {{msgName}} message
-	c.async.Subscribe(ch, func(topic, buf{{bindingList}})) {
+	c.Transport.Subscribe(ch, func(topic, buf{{bindingList}})) {
 		// Init a new message object & attempt to use the defined content.Reader to parse
 		// the message payload
 		msg := message.New{{msgName}}()
