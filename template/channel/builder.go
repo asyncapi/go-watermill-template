@@ -1,6 +1,10 @@
 {%- from "../../partials/go.template" import messageName -%}
 package channel
 
+import (
+	"strings"
+)
+
 // Publish Operation Topics
 {%- for ch_name, ch in asyncapi.channels() -%}
 	{%- if ch.hasPublish()  -%}

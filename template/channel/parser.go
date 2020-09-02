@@ -1,6 +1,11 @@
 {%- from "../../partials/go.template" import messageName -%}
 package channel
 
+import (
+	"regexp"
+	"errors"
+)
+
 // Subscribe Operation Topics
 var (
 	{%- for ch_name, ch in asyncapi.channels() -%}
