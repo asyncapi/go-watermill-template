@@ -18,12 +18,5 @@ func New{{ modelName }}(
     {%- endif %}
 {%- endfor %}) *{{ modelName }} {
 
-    return &{{ modelName }}{  
-{%- for propertyName, property in schema.properties() %}
-      
-    {%- if schema.required() | includes(propertyName) %}
-        {{ propertyName | toGoPublicID }}: {{ propertyName | toGoPrivateID }}, 
-    {%- endif %}
-{%- endfor %}
-    }
+    return new({{ modelName }})
 }

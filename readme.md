@@ -21,9 +21,15 @@ The template provides switches to allow for different levels of generation. More
 Code Samples:
 
 Channel Building / Parsing
- ```
- code snippets
- ```
+```go
+p := &channel.TurnOnParams{"<my-id>"}
+p.Build() // Returns: "smartylighting/streetlights/1/0/action/<my-id>/turn/on"
+
+p := &channel.ReceiveLightMeasurementParams{}
+err := p.Parse("smartylighting/streetlights/1/0/event/(.+)/lighting/measured")
+// Populates p with channel parameters
+// p = { StreetlightId: "<my-id>" }
+```
 
 ## Getting Started
 
@@ -40,9 +46,9 @@ The AsyncAPI Generation tool is required to execute this template. Find it here 
 	$ git clone https://github.com/jposton96a/to-go.git
 	```
 3. Run the generator.  
-	Args in order:
+	Arguments:
 	* The path to your Async specification file
-	* The path to the template folder of this directory
+	* The path to the template folder of this repo
 	* Destination directory for output
 	```
 	$ ag ./asyncapi.yaml ~/dev/tools/to-go/template -o ./<dest-dir>
