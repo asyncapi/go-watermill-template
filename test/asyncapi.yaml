@@ -85,19 +85,11 @@ channels:
 
 components:
   messages:
-    lightMeasured: 
-      name: lightMea
+    lightMeasured:
+      name: lightMeasured
       title: Light measured
       summary: Inform about environmental lighting conditions for a particular streetlight.
-      contentType: application/xml
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      payload:
-        $ref: "#/components/schemas/lightMeasuredPayload"
-    lightMeasured2:
-      title: Light measured
-      summary: Inform about environmental lighting conditions for a particular streetlight.
-      contentType: application/xml
+      contentType: application/json
       traits:
         - $ref: '#/components/messageTraits/commonHeaders'
       payload:
@@ -120,36 +112,9 @@ components:
         $ref: "#/components/schemas/dimLightPayload"
 
   schemas:
-    mySchema:
-      type: string
-    testSchema:
-      type: object
     lightMeasuredPayload:
       type: object
-      required:
-        - sentAt
-        - lumens
-        - test-x
       properties:
-        test-x:
-          type: array
-          items:
-            type: string
-            format: uri
-        test_y:
-          $ref: "#/components/schemas/dimLightPayload"
-        test_z:
-          $ref: "#/components/schemas/mySchema"
-        test_anon:
-          type: object
-          properties:
-            test1: {type: string}
-            test2: {type: integer}
-            test3:
-              type: object
-              properties:
-                test4: {type: string}
-
         lumens:
           type: integer
           minimum: 0
