@@ -43,7 +43,7 @@ The AsyncAPI Generation tool is required to execute this template. Find it here 
 2. Clone the template to wherever you like
 	```bash
 	$ cd ~/dev/tools/
-	$ git clone https://github.com/jposton96a/to-go.git
+	$ git clone https://github.com/asyncapi/go-template.git
 	```
 3. Run the generator.  
 	Arguments:
@@ -51,7 +51,7 @@ The AsyncAPI Generation tool is required to execute this template. Find it here 
 	* The path to the template folder of this repo
 	* Destination directory for output
 	```
-	$ ag ./asyncapi.yaml ~/dev/tools/to-go/template -o ./<dest-dir>
+	$ ag ./asyncapi.yaml ~/dev/tools/go-template/template -o ./<dest-dir>
 	```
 
 ## What does the generation look like? 
