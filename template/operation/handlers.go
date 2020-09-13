@@ -2,21 +2,17 @@
 package operation
 
 // operation.Handlers serve as an extensible pattern for defining how 
-// to handle incoming async messages 
+// to handle incoming async messages from subscriptions to channels
 
-{% for ch_name, ch in asyncapi.channels() -%}
+{%- for ch_name, ch in asyncapi.channels() -%}
+	{#- Handlers are only needed for incoming messages -#}
 	{%- if ch.hasSubscribe()  -%}
 		{# These vars are effectively global to this file #}
 		{%- set opName = ch.subscribe().id() | toGoPublicID -%}
-		{%- set msgName = messageName(ch.subscribe().message()) -%}
-	{%- else  -%}
-		{# These vars are effectively global to this file #}
-		{%- set opName = ch.publish().id() | toGoPublicID -%}
-		{%- set msgName = messageName(ch.publish().message()) -%}
-	{%- endif %}
+		{%- set msgName = messageName(ch.subscribe().message()) %}
 
-{#- TODO:: How to avoid duplicating message handler identifiers? -#}
 // {{ msgName -}}Handler defines how to handle an incoming {{msgName}} message.
-type func {{ msgName }}Handler(params channel.{{ opName }}Params, msg message.{{msgName}})	
+type {{ msgName }}Handler func(params channel.{{ opName }}Params, msg message.{{msgName}})
 
+	{%- endif -%}	
 {% endfor -%}
