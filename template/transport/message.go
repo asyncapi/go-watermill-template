@@ -21,7 +21,7 @@ func NewMessage(ctx context.Context) Message {
 	return Message{
 		context:    ctx,
 		Headers:    make(map[string]string),
-		RawPayload: nil
+		RawPayload: nil,
 	}
 }
 

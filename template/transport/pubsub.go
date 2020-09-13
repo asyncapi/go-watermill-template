@@ -1,17 +1,17 @@
 package transport
 
-type MessageHandler func(channel string, message Message, bindings ...msgBindings map[string]interface{})
+type MessageHandler func(channel string, message Message, bindings ...map[string]interface{})
 
 type PubSub interface {
-	Publish
-	Subscribe
+	Publisher
+	Subscriber
 }
 
-type interface Publisher {
+type Publisher interface {
 	// Publish 
-	Publish(channel string, msg Message, bindings ...opBindings map[string]interface{})
+	Publish(channel string, msg Message, bindings ...map[string]interface{})
 }
 
-type interface Subscriber {
-	Subscribe(channel string, fn MessageHandler, bindings ...opBindings map[string]interface{})
+type Subscriber interface {
+	Subscribe(channel string, fn MessageHandler, bindings ...map[string]interface{})
 }
