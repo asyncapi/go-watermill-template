@@ -4,7 +4,7 @@ import "context"
 
 // Message contains the payload and headers sent or received from the 
 // transport implementation
-type Message {
+type Message struct {
 	// context holds the context application context of this message
 	// it can be used to pass tracing information & signal timeouts for pub/sub operations
 	context context.Context
@@ -18,10 +18,9 @@ type Message {
 
 // NewMessage instantiates a new message with the provided context
 func NewMessage(ctx context.Context) Message {
-	ctx := context.Background()
-
 	return Message{
-		Headers: make(map[string]string)
+		context:    ctx,
+		Headers:    make(map[string]string),
 		RawPayload: nil
 	}
 }
