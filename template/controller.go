@@ -2,13 +2,19 @@
 {%- from "../partials/go.template" import getOpBinding -%}
 package asyncapi
 
-import "transport"
+import (
+	"asyncapi/transport"
+	"asyncapi/channel"
+	"asyncapi/message"
+	"asyncapi/operation"
+	"errors"
+)
 
-type Controller {
+type Controller struct {
 	Transport transport.PubSub
 
-	contentWriters map[string]content.Writer
-	contentReaders map[string]content.Reader
+	contentWriters map[string]transport.ContentWriter
+	contentReaders map[string]transport.ContentReader
 }
 
 {% for ch_name, ch in asyncapi.channels() -%}
@@ -34,18 +40,19 @@ func (c Controller) {{ ch.publish().id() | toGoPublicID }}(params channel.{{opNa
 	{%- endfor %}
 
 	// Throw error for missing content type encoder
-	w := c.getWriter(msg.ContentType)
-	if w == nil {
+	w, ok := c.contentWriters[msg.ContentType]
+	if !ok {
 		return errors.New("no message writer is registered for content type: " + msg.ContentType)
 	}
 
 	// Throw error if failed to encode payload
-	if msg.RawPayload, err := w.Write(msg.Payload) {
+	var err error
+	if msg.RawPayload, err = w.Write(msg.Body); err != nil {
 		return err
 	}
 
 	// Publish the underlying transport.Message with the transport layer
-	return c.Transport.Publish(params.Build(), mag.Message{{bindingList}})
+	return c.Transport.Publish(params.Build(), msg.Message{{bindingList}})
 }
 
 	{% else  -%}
@@ -54,7 +61,7 @@ func (c Controller) {{ ch.publish().id() | toGoPublicID }}(params channel.{{opNa
 		{%- set msgName = messageName(ch.subscribe().message()) -%}
 
 // {{ ch.subscribe().id() | toGoPublicID }} implements operation.Consumer
-func (c Controller) {{ ch.subscribe().id() | toGoPublicID }}(params channel.{{opName}}Params, fn {{msgName}}Handler) error {
+func (c Controller) {{ ch.subscribe().id() | toGoPublicID }}(params channel.{{opName}}Params, fn operation.{{msgName}}Handler) error {
 	// Define any operation bindings. These are constant per operation
 	{%- set bindingList = "" -%}
 	{%- set counter = 0 -%}
@@ -69,31 +76,36 @@ func (c Controller) {{ ch.subscribe().id() | toGoPublicID }}(params channel.{{op
 		{%- set counter = counter + 1 %}
 	{%- endfor %}
 
-	// Throw error before subscribing if expected content type reader is not registered
-	r := c.getReader(msg.ContentType)
-	if r == nil {
-		return errors.New("no message writer is registered for content type: " + msg.ContentType)
-	}
-
 	// Subscribe with the transport layer. Wrap message handler /w logic to decode 
 	// transport.Message payload into {{msgName}} message
-	c.Transport.Subscribe(ch, func(topic, buf{{bindingList}})) {
+	c.Transport.Subscribe(params.Build(), func(ch string, rawMessage transport.Message) {
 		// Init a new message object & attempt to use the defined content.Reader to parse
 		// the message payload
-		msg := message.New{{msgName}}()
-		if err := r.Read(buf, &msg.Payload); err != nil {
-			return error
+		msg := message.New{{msgName}}(rawMessage)
+
+		// TODO: Throw error before subscribing if expected content type reader is not registered
+		r, ok := c.contentReaders[msg.ContentType]
+		if !ok {
+			panic("no ContentReader registered for contentType: " + msg.ContentType)
+		}
+
+		if err := r.Read(msg.RawPayload, &msg.Body); err != nil {
+			panic(err)
 		}
 
 		// Parse the params out of the channel
 		recParams := &channel.{{opName}}Params{}
 		if err := recParams.Parse(ch); err != nil {
-			return err
+			panic(err)
 		}
 
 		// Call the operation's message handler
-		fn(recParams, msg)
-	})
+		fn(*recParams, msg)
+	}{{bindingList}})
+
+	// TODO: Return an ErrorStream struct wrapping a chan error
+	//       instead of panics
+	return nil
 }
 
 	{% endif %}

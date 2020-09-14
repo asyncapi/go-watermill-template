@@ -1,6 +1,6 @@
 package transport
 
-type MessageHandler func(channel string, message Message, bindings ...map[string]interface{})
+type MessageHandler func(channel string, message Message)
 
 type PubSub interface {
 	Publisher
@@ -9,7 +9,7 @@ type PubSub interface {
 
 type Publisher interface {
 	// Publish 
-	Publish(channel string, msg Message, bindings ...map[string]interface{})
+	Publish(channel string, msg Message, bindings ...map[string]interface{}) error
 }
 
 type Subscriber interface {

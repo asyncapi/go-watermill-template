@@ -1,6 +1,11 @@
 {%- from "../../partials/go.template" import messageName -%}
 package operation
 
+import (
+	"asyncapi/channel"
+	"asyncapi/message"
+)
+
 type Producer interface {
 
 {%- for ch_name, ch in asyncapi.channels() -%}

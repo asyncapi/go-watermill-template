@@ -1,6 +1,12 @@
 {%- from "../../partials/go.template" import messageName -%}
 package operation
 
+
+import (
+	"asyncapi/channel"
+	"asyncapi/message"
+)
+
 // operation.Handlers serve as an extensible pattern for defining how 
 // to handle incoming async messages from subscriptions to channels
 

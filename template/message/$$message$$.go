@@ -4,6 +4,11 @@
 {%- set msgName = messageName(message) -%}
 package message
 
+import (
+	"asyncapi/transport"
+	"asyncapi/model"
+)
+
 // {{ msgName }} is used to {{message.summary() | lowerFirst}}
 type {{ msgName }} struct {
 	transport.Message
@@ -11,6 +16,14 @@ type {{ msgName }} struct {
 	// ContentType indicates the specified MIME type for this message. If empty, the defaultContentType should be used 
 	ContentType string
 	
-	// Payload contains the content defined by the payload AsyncAPI field
-	Payload model.{{ getGoType(message.payload()) }}
+	// Body contains the content defined by the payload AsyncAPI field
+	Body model.{{ getGoType(message.payload()) }}
+}
+
+// New{{ msgName }} instantiates a new message with the provided context
+func New{{ msgName }}(msg transport.Message) {{ msgName }} {
+	return {{ msgName }} {
+		Message: msg,
+		ContentType: "{{ message.contentType() }}",
+	}
 }
