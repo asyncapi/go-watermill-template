@@ -1,0 +1,111 @@
+{# defineGoType(schema)
+
+Input: schema
+Output: A Go type definition corresponding to the 
+        schema's data-type. Useful for declaring 
+        anonymous types and settings named fields
+#}
+{%- macro defineGoType(schema, tag) %}
+    {%- if schema.type() === "object" -%}
+        {{ asGoStruct(schema, tag) }}
+    {%- elseif schema.type() === "array" -%}
+        []{{ getGoType(schema.items()) }}
+    {%- else -%}
+        {{ schema.type() | toGoPrimitive(schema.format()) }}
+    {%- endif %}
+{%- endmacro %}
+
+{# getGoType(schema)
+
+    Wraps defineGoType() to return the schema's corresponding Go type identifier
+    if the schema was provided one in the AsyncAPI spec.
+
+Input: schema
+Output: A Go type derived from the schema's UID. 
+        If the schema was given an ID, it is converted to Go conventions.
+        If the schema was defined anonymously, defineGoType() is called 
+        to declare the type anonymously
+#}
+{%- macro getGoType(schema, tag) %}
+    {#- When not provided, AsyncAPI parser ID's anonymous schemas with '<anonymous-schema-#>' where # is a unique integer -#}
+    {%- if not schema.uid() | includes("anonymous-schema-") -%}
+        {{ schema.uid() | toGoPublicID }}
+    {%- else -%}
+        {{ defineGoType(schema, tag) }}
+    {%- endif %}
+{%- endmacro %}
+
+{# asGoStruct(schema)
+
+Input: schema
+Output: A Go struct definition
+#}
+{%- macro asGoStruct(schema, tag) -%}
+struct {
+{%- for propertyName, property in schema.properties() -%}
+    {%- set usePointer = "" if schema.required() | includes(propertyName) else "*" %}
+    // {{ propertyName | toGoPublicID }} is a property defined in the AsyncAPI specification
+    {{ propertyName | toGoPublicID }} {{usePointer}}{{ getGoType(property, tag) }}
+    {%- if tag %} `{{tag}}:"{{propertyName}}"`{%- endif %}
+{% endfor -%}
+}
+{%- endmacro %}
+
+{# messageName(schema)
+
+Input: schema
+Output: A Go type identifier of the message. 
+        Derived from the message's name field, if provided. Otherwise,
+        the message's UID is used.
+#}
+{%- macro messageName(msg) -%}
+    {%- set msgName = (msg.name() | toGoPublicID) if msg.name() else (msg.uid() | toGoPublicID) -%}
+    {{ msgName }}
+{%- endmacro -%}
+
+{# getOpBinding(operation)
+
+Input: operation
+Output: instantiation of a binding.{{protocol}} operation bindings struct
+
+#}
+{% macro getOpBinding(protocol, binding) %}
+    {% if protocol == "mqtt5" -%}
+        {{ protocol }}Bindings := map[string]interface{} {
+            {%- if binding.qos -%}"qos": {{- binding.qos -}},{%- endif %}
+            {%- if binding.retain -%}"retain": {{- binding.retain -}},{%- endif -%}
+            {%- if binding.bindingVersion -%} "bindingVersion": "{{ binding.bindingVersion }}",{%- endif -%}
+        }
+    {% endif -%}
+
+    {%- if protocol == "kafka" -%}
+        {{ protocol }}Bindings := map[string]interface{} {
+            {%- if binding.groupId -%} "groupID": "{{- binding.groupId -}}",{%- endif -%}
+            {%- if binding.clientId -%} "clientID": "{{- binding.clientId -}}",{%- endif -%}
+            {%- if binding.bindingVersion -%} "bindingVersion": "{{- binding.bindingVersion -}}",{%- endif -%}
+        }
+    {%- endif -%}
+{%- endmacro %}
+
+{# defineOperationParams(schema)
+
+Input: 
+    op - A channel operation [e.g ch.publish() | ch.subscribe() ]
+    params - the channel params [e.g ch.parameters() ]
+
+Output: a struct definition containing the each of the channel parameters
+        used by the operation. Each parameter is defined as its associated 
+        Go type with an identifer matching the parameter name converted to 
+        UpperCamelCase. Comments are pulled from parameter description
+#}
+{%- macro defineOperationParams(op, params) %}
+{%- set opName = op.id() | toGoPublicID -%}
+{%- set msgName = messageName(op.message()) %}
+// {{opName}}Params holds the channel parameters used by the {{opName}} operation
+type {{opName}}Params struct {
+	{%- for param_name, param in params %}
+	// {{ param_name | toGoPublicID }} is {{ param.description() | lowerFirst }}
+	{{ param_name | toGoPublicID }} {{ getGoType(param.schema()) }}
+	{%- endfor %}
+}
+{%- endmacro %}
