@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"no test specified yet\",
+    "test": "echo \"no test specified yet\"",
     "develop": "ag test/asyncapi.yaml ./ -o test/output --force-write --watch-template"
   },
   "author": "",
