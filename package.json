@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@asyncapi/generator-filters": "^1.0.0"
+    "@asyncapi/generator-filters": "^2.0.0"
   },
   "generator": {
     "parameters": null,
