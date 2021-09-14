@@ -1,161 +1,172 @@
-# AsyncAPI To-Go! :package: 
+<!--   
+The good readme should be easy to navigate through, therefore remember to add `markdown-toc` to devDependencies of your template and generate a table of contents by using the following script `"generate:readme:toc": "markdown-toc -i README.md"`
+-->
 
-Do you bang your head against the wall writing event driven microservices?  
-Well now you you can bang your head faster!
+<!-- toc -->
 
-To-Go helps produce the code behind your event-driven operations by transforming AsyncAPI specs **To Go**
+- [Overview](#overview)
+- [Technical requirements](#technical-requirements)
+- [Specification requirements](#specification-requirements)
+- [Supported protocols](#supported-protocols)
+- [How to use the template](#how-to-use-the-template)
+  * [CLI](#cli)
+  * [Docker](#docker)
+- [Template configuration](#template-configuration)
+- [Custom hooks that you can disable](#custom-hooks-that-you-can-disable)
+- [Development](#development)
+- [Contributors](#contributors)
 
-## What is it?
-AsyncAPI To-Go is a code generation template for the [AsyncAPI generator](https://github.com/asyncapi/generator) that can be used to generate boilerplate Go code for interacting with event-driven architectures. 
+<!-- tocstop -->
 
-The generator consumes an [**AsyncAPI 2.0**](https://www.asyncapi.com/docs/specifications/2.0.0/) YAML or JSON specification file and uses this template to produce matching channel constants, message payload structs, and (W.I.P.) ~~optionally, logic to wrap it into a lightweight library.~~ The underlying transport layer interface enables pluggable support for most messaging system (Kafka, MQTT, AMPQ, etc.).
+## Overview
 
-The template provides switches to allow for different levels of generation. More information can be found at [generation levels](#generation-levels)
-* Channel parsing / generation with parameter structs
-* Schema and Message definitions
-* ~~Content Type parsing with the ability to extend supported content types~~ (Soon)
-* A transport interface to support various underlying event messaging protocols
-* ~~A simple wrapping framework to provide AsyncAPI *operations* as high-level functions~~ (Very Soon)
+<!--  
+The overview should explain in just a few sentences the template's purpose and its most essential features.
+-->
 
-## What Am I Getting Myself Into? 
-Code Samples:
+This template generates a go lang module that uses [watermill](https://github.com/ThreeDotsLabs/watermill) as the messaging middleware
 
-Channel Building / Parsing
-```go
-p := &channel.TurnOnParams{"<my-id>"}
-p.Build() // Returns: "smartylighting/streetlights/1/0/action/<my-id>/turn/on"
+## Technical requirements
 
-p := &channel.ReceiveLightMeasurementParams{}
-err := p.Parse("smartylighting/streetlights/1/0/event/(.+)/lighting/measured")
-// Populates p with channel parameters
-// p = { StreetlightId: "<my-id>" }
+<!--  
+Specify what version of the Generator is your template compatible with. This information should match the information provided in the template configuration under the `generator` property.
+-->
+
+- 1.1.0 =< [Generator](https://github.com/asyncapi/generator/) < 2.0.0,
+- Generator specific [requirements](https://github.com/asyncapi/generator/#requirements)
+
+## Specification requirements
+
+<!--  
+The template might need some AsyncAPI properties that normally are optional. For example code generator might require some specific binding information for a given protocol. Even though you can provide defaults or fallbacks, you should describe in the readme what is the most optimal set of properties that the user should provide in the AsyncAPI file.
+-->
+
+The table contains information on parts of the specification required by this template to generate the proper output.
+
+Property name | Reason | Fallback | Default
+---|---|---|---
+`components.schemas` | This template supports only schemas that have unique and human-readable names. Such names can also be provided if schemas are described under `components.schemas` and each schema is a separate object with its unique key. | - | -
+
+## Supported protocols
+
+<!--  
+Specify what protocols is your code generator supporting. This information should match the information provided in the template configuration under the `supportedProtocols` property. Don't put this section in your readme if your template doesn't generate code.
+-->
+
+Currently this template supports AMQP subscribers
+
+## How to use the template
+
+<!--  
+Make sure it is easy to try out the template and check what it generates. Instructions for CLI and Docker should be easy to use; just copy/paste to the terminal. In other words, you should always make sure to have ready to use docker-compose set up so the user can quickly check how generated code behaves.
+-->
+
+This template must be used with the AsyncAPI Generator. You can find all available options [here](https://github.com/asyncapi/generator/).
+
+### CLI
+
+As of this initial commit this template has been tested to generate an AMQP subscriber for the following asyncapi.yml file
+
+```yaml
+asyncapi: '2.1.0'
+
+info:
+  title: Streetlights API
+  version: '1.0.0'
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+
+defaultContentType: application/json
+
+servers:
+  local:
+    url: localhost:5672
+    protocol: amqp
+    security:
+      - user-password: []
+
+channels:
+  light/measured:
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: light/measured
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.2.0
+    publish:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      operationId: onLightMeasured
+      message:
+        name: LightMeasured
+        payload:
+          $id: LightMeasured
+          additionalProperties: false
+          type: object
+          properties:
+            id:
+              type: integer
+              minimum: 0
+              description: Id of the streetlight.
+            lumens:
+              type: integer
+              minimum: 0
+              description: Light intensity measured in lumens.
+            sentAt:
+              type: string
+              format: date-time
+              description: Date and time when the message was sent.
+
+components:
+  securitySchemes:
+    user-password:
+      type: userPassword
 ```
 
-## Getting Started
+#### Run the following command to generate a golang module
 
-### Dependencies:
-The AsyncAPI Generation tool is required to execute this template. Find it here : https://github.com/asyncapi/generator/#install-the-cli.
-
-1. Install AsyncAPI Generation tool
-	```bash
-	$ npm install -g @asyncapi/generator
-	```
-2. Clone the template to wherever you like
-	```bash
-	$ cd ~/dev/tools/
-	$ git clone https://github.com/asyncapi/go-template.git
-	```
-3. Run the generator.  
-	Arguments:
-	* The path to your Async specification file
-	* The path to the template folder of this repo
-	* Destination directory for output
-	```
-	$ ag ./asyncapi.yaml ~/dev/tools/go-template/template -o ./<dest-dir>
-	```
-
-## What does the generation look like? 
-Examples based on the Streetlights example specification
-
-#### Message Sample
-```golang
-//   Location: message/<msg_name/id>.go
-
-
-// DimLight is used to command a particular streetlight to dim the lights.
-type DimLight struct {
-	transport.Message
-
-	// ContentType indicates the specified MIME type for this message. If empty, the defaultContentType should be used 
-	ContentType string
-	
-	// Payload contains the content defined by the payload AsyncAPI field
-	Payload model.DimLightPayload
-}
+```bash
+npm install -g @asyncapi/generator
+# clone this repository and navigate to this repository
+ag /path/to/asyncapi.yaml ./ -o /path/to/generated-code -p moduleName=your-go-module-name
 ```
-#### Schema Sample
-```golang
-//   Location: model/<schema_name>.go
 
-// DimLightPayload is a Schema defined in the AsyncAPI specification
-type DimLightPayload struct {
-    // Percentage is a property defined in the AsyncAPI specification
-    Percentage *int64 `json:"percentage"`
+#### How to use the generated code
 
-    // SentAt is a property defined in the AsyncAPI specification
-    SentAt *SentAt `json:"sentAt"`
-}
+The above code currently generates a golang module that has a AMQP subscriber.
 
+##### Pre-requisites
+To run the generated code the following needs to be installed
 
-func NewDimLightPayload() *DimLightPayload {
+1. go 1.16 +
+2. rabbitmq-server
 
-    return &DimLightPayload{
-    }
-}
+##### Running the code
+
+1. Navigate to the path where the code was generated
+2. Run the following commands to download the dependencies
+```bash
+go mod download
+go mod tidy
 ```
-#### Channel Parameters Sample
-```golang
-//   definitions:   channel/parameters.go
-//   builder funcs: channel/builder.go
-//   parser funcs:  channel/parser.go
-
-// TurnOnParams holds the channel parameters used by the TurnOn operation
-type TurnOnParams = struct {
-	// StreetlightId is the ID of the streetlight.
-	StreetlightId string
-}
-
-// Parse populates the fields of a TestMyThingParams instance with values 
-// extracted from a channel
-func (params *TestMyThingParams) Parse(ch string) error {
-	match := SubscribeTestMyThingRegex.FindStringSubmatch(ch)
-	if len(match) < 2 {
-		return errors.New("channel did not match expected format: " + ch)
-	}
-
-	// Map the struct fields to the order they will appear in the topic
-	fields := []*string{&params.StreetlightId,&params.Action}
-
-	for i, field := range fields {
-		// Populate params fields - skipping the first index of 'match' as 
-		// captured groups start at index=1
-		*field = match[i+1]
-	}
-
-	return nil
-}
-
-// Build uses TurnOnParams to build the channel required for TurnOn operations
-func (params TurnOnParams) Build() string {
-	const ch string = "smartylighting/streetlights/1/0/action/{streetlightId}/turn/on"
-	r := strings.NewReplacer("{streetlightId}",params.StreetlightId)
-
-	return r.Replace(ch)
-}
-
+3. Currently the code does not utilize the server bindings to generate the server URI. It is currently hardcoded to point to a local instance of `rabbitmq`. It is hardcoded as `"amqp://guest:guest@localhost:5672/"` at `<generated-code>/config/server.go`. Change it as per your rabbitmq instance requirements
+4. Finally navigate to the root folder of the generated code and run
+```bash
+go run main.go
 ```
-#### Controller Sample
-```golang
-//   Locations: controller.go
+5. If you have a local instance of `rabbitmq`, navigate to it using `http://localhost:15672/` with username and password `guest`/ `guest` (These are default rabbitmq credentials). 
+6. Create a queue as per the async api spec
+7. Publish a message to the queue as per the async api spec
+8. Check the output at the terminal where `go run main.go` was running and the published message should be printed
 
-// TurnOff implements operation.Producer
-func (c Controller) TurnOff(params channel.TurnOffParams, msg message.TurnOnOff) error {
-	// Define any operation bindings. These are constant per operation
-    var mqtt5Bindings = map[string]interface{} {"qos":1,"retain":true,"bindingVersion": "0.0.1",}
 
-	// Throw error for missing content type encoder
-	w := c.getWriter(msg.ContentType)
-	if w == nil {
-		return errors.New("no message writer is registered for content type: " + msg.ContentType)
-	}
 
-	// Throw error if failed to encode payload
-	if msg.RawPayload, err := w.Write(msg.Payload) {
-		return err
-	}
 
-	// Publish the underlying transport.Message with the transport layer
-	return c.async.Publish(params.Build(), mag.Message, kafkaBindings)
-}
 
-```
