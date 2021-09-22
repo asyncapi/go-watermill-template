@@ -1,7 +1,7 @@
 {
-  "name": "template-for-generator-templates",
+  "name": "go-template",
   "version": "0.0.1",
-  "description": "Template for generator templates to make it much easier to start writing your own generator template",
+  "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
     "test": "npm run testTemplate && npm run testHooks && npm run testFilters",
@@ -16,22 +16,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asyncapi/template-for-generator-templates.git"
+    "url": "git+https://github.com/asyncapi/go-template"
   },
   "keywords": [
     "asyncapi",
     "generator",
     "template"
   ],
-  "author": "Lukasz Gornicki <lpgornicki@gmail.com> (https://github.com/derberg/)",
+  "author": "Anand Sunderraman <anand.sunderraman@gmail.com> (https://github.com/anandsunderraman)",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/asyncapi/template-for-generator-templates/issues"
+    "url": "https://github.com/asyncapi/go-template/issues"
   },
-  "homepage": "https://github.com/asyncapi/template-for-generator-templates#readme",
+  "homepage": "https://github.com/asyncapi/go-template#readme",
   "dependencies": {
     "@asyncapi/generator-filters": "^2.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
@@ -63,25 +63,6 @@
   "generator": {
     "renderer": "react",
     "parameters": {
-      "asyncapiFileDir": {
-        "description": "Custom location of the AsyncAPI file that you provided as an input in generation. By default it is located in the root of the output directory"
-      },
-      "pdf": {
-        "description": "Set to `true` to get index.pdf generated next to your index.html",
-        "default": false
-      },
-      "png": {
-        "description": "Set to `true` to get index.png generated next to your index.html",
-        "default": false
-      },
-      "svg": {
-        "description": "Set to `true` to get index.svg generated next to your index.html",
-        "default": false
-      },
-      "maxTextSize": {
-        "description": "It is possible that in case of an extremely large AsyncAPI document default mermaid recommended text size will not be enough. Then you need to explicitly make it larger",
-        "default": 50000
-      },
       "moduleName": {
         "description": "name of the go module to be generated",
         "default": "go-async-api"
@@ -91,10 +72,6 @@
         "default": "1.16"
       }
     },
-    "nonRenderableFiles": [
-      "style.css",
-      "sample.gif"
-    ],
     "generator": ">=1.3.0 <2.0.0"
   },
   "devDependencies": {

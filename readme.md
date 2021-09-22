@@ -135,8 +135,13 @@ components:
 ```bash
 npm install -g @asyncapi/generator
 # clone this repository and navigate to this repository
-ag /path/to/asyncapi.yaml ./ -o /path/to/generated-code -p moduleName=your-go-module-name
+ag /path/to/asyncapi.yaml ./ -o /path/to/generated-code -p moduleName=your-go-module-name -p goVersion=1.17
 ```
+
+There are 2 options that can be passed to the generator
+
+1. moduleName: name of the go module to be generated
+2. goVersion: version of Go to be specified in the go.mod file
 
 #### How to use the generated code
 
@@ -146,7 +151,7 @@ The above code currently generates a Go module that has a AMQP subscriber.
 To run the generated code the following needs to be installed
 
 1. go 1.16 +
-2. rabbitmq-server
+2. rabbitmq-server OR docker
 
 ##### Running the code
 
