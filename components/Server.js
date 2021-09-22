@@ -22,7 +22,7 @@ func GetAMQPURI() string {
     }
   
     return `
-package config
+package asyncapi
 
 ${configBlock}
   `

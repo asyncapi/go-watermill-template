@@ -4,14 +4,15 @@ import { pascalCase } from './common';
 
 let subscriptionFunction = (channelName, operation, message) => `
 // ${operation} subscription handler for ${channelName}.        
-func ${operation}(msg *message.Message) {
+func ${operation}(msg *message.Message) error {
     log.Printf("received message payload: %s", string(msg.Payload))
 
-    var lm payloads.${message}
+    var lm ${message}
     err := json.Unmarshal(msg.Payload, &lm)
     if err != nil {
-        log.Errorf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
+        fmt.Printf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
     }
+    return nil
 }
 `;
 
@@ -29,13 +30,14 @@ function SubscriptionHandlers({ channels }) {
 
 export function Handlers({ moduleName, channels}) {
 return `
-package handlers
+package asyncapi
 
 import (
-    "encoding/json"
-    "github.com/ThreeDotsLabs/watermill/message"
-    "${moduleName}/payloads"
-    "log"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	"github.com/ThreeDotsLabs/watermill/message"
 )
 ${render(<SubscriptionHandlers channels={channels} />)}
 `

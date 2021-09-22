@@ -4,12 +4,12 @@ import { File } from '@asyncapi/generator-react-sdk';
 //render an AMQP subscriber
 function AMQPSubscriber() {
   return `
-  amqpSubscriber, err := config.GetAMQPSubscriber(config.GetAMQPURI())
+  amqpSubscriber, err := asyncapi.GetAMQPSubscriber(asyncapi.GetAMQPURI())
   if err != nil {
     log.Fatalf("error creating amqpSubscriber: %s", err)
   }
 
-  config.ConfigureAMQPSubscriptionHandlers(router, amqpSubscriber)
+  asyncapi.ConfigureAMQPSubscriptionHandlers(router, amqpSubscriber)
   `
 }
 
@@ -68,11 +68,11 @@ import (
   "os"
   "os/signal"
   "syscall"
-	"${params.moduleName}/config"
+	"${params.moduleName}/asyncapi"
 )
 
 func main() {
-  router, err := config.GetRouter()
+  router, err := asyncapi.GetRouter()
   if err != nil {
     log.Fatalf("error creating watermill router: %s", err)
   }

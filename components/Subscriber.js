@@ -34,7 +34,7 @@ export function Subscriber({subscriberFlags}) {
     }
 
     return `
-package config
+package asyncapi
 
 import (
     "github.com/ThreeDotsLabs/watermill"

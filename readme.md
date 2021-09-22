@@ -154,6 +154,7 @@ To run the generated code the following needs to be installed
 2. Run the following commands to download the dependencies
 ```bash
 go mod download
+go mod tidy
 ```
 3. Currently the code does not utilize the server bindings to generate the server URI. It is currently hardcoded to point to a local instance of `rabbitmq`. It is hardcoded as `"amqp://guest:guest@localhost:5672/"` at `<generated-code>/config/server.go`. Change it as per your rabbitmq instance requirements
 4. Finally to execute the code run

@@ -6,7 +6,7 @@ let addHandlerFunction = (queue, operation) => `
     "${operation}",     // handler name, must be unique
     "${queue}",         // topic from which we will read events
     s,
-    handlers.${operation}, 
+    ${operation}, 
   )
 `
 
@@ -35,12 +35,11 @@ ${render(<AMQPRouterRules channels={channels} />)}
 }  
 
   return `
-package config
+package asyncapi
 
 import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"${moduleName}/handlers"
 )
 
 // GetRouter returns a watermill router. 
