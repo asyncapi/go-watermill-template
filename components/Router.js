@@ -27,7 +27,7 @@ export function Router({moduleName, channels, subscriberFlags}) {
   let amqpRules = ""
   if (subscriberFlags.hasAMQPSub) {
     amqpRules = `
-//ConfigureAMQPSubscriptionHandlers configures the router with the subscription handler    
+// ConfigureAMQPSubscriptionHandlers configures the router with the subscription handler.    
 func ConfigureAMQPSubscriptionHandlers(r *message.Router, s message.Subscriber) {
 ${render(<AMQPRouterRules channels={channels} />)}
 }    
@@ -43,7 +43,7 @@ import (
 	"${moduleName}/handlers"
 )
 
-//GetRouter returns a watermill router 
+// GetRouter returns a watermill router. 
 func GetRouter() (*message.Router, error){
 	logger := watermill.NewStdLogger(false, false)
 	return message.NewRouter(message.RouterConfig{}, logger)

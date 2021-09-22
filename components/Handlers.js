@@ -3,18 +3,15 @@ import { pascalCase } from './common';
 
 
 let subscriptionFunction = (channelName, operation, message) => `
-//${operation} subscription handler for ${channelName}        
-func ${operation}(msg *message.Message) error {
+// ${operation} subscription handler for ${channelName}.        
+func ${operation}(msg *message.Message) {
     log.Printf("received message payload: %s", string(msg.Payload))
 
     var lm payloads.${message}
     err := json.Unmarshal(msg.Payload, &lm)
     if err != nil {
-        log.Fatalf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
-        return err
+        log.Errorf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
     }
-
-    return nil
 }
 `;
 

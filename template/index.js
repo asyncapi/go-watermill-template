@@ -7,7 +7,6 @@ function AMQPSubscriber() {
   amqpSubscriber, err := config.GetAMQPSubscriber(config.GetAMQPURI())
   if err != nil {
     log.Fatalf("error creating amqpSubscriber: %s", err)
-    return
   }
 
   config.ConfigureAMQPSubscriptionHandlers(router, amqpSubscriber)
@@ -76,7 +75,6 @@ func main() {
   router, err := config.GetRouter()
   if err != nil {
     log.Fatalf("error creating watermill router: %s", err)
-    return
   }
 
   ${subscriberConfig}
@@ -85,7 +83,6 @@ func main() {
   defer stop()
   if err = router.Run(ctx); err != nil {
     log.Fatalf("error running watermill router: %s", err)
-    return
   }
 }
 

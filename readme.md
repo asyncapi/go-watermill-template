@@ -154,14 +154,17 @@ To run the generated code the following needs to be installed
 2. Run the following commands to download the dependencies
 ```bash
 go mod download
-go mod tidy
 ```
 3. Currently the code does not utilize the server bindings to generate the server URI. It is currently hardcoded to point to a local instance of `rabbitmq`. It is hardcoded as `"amqp://guest:guest@localhost:5672/"` at `<generated-code>/config/server.go`. Change it as per your rabbitmq instance requirements
 4. Finally to execute the code run
 ```bash
 go run main.go
 ```
-5. If you have a local instance of `rabbitmq`, navigate to it using `http://localhost:15672/` with username and password `guest`/ `guest` (These are default rabbitmq credentials). 
+5. Running local instance of `rabbitmq`, navigate to it using `http://localhost:15672/` with username and password `guest`/ `guest` (These are default rabbitmq credentials). 
+   FYI one can start an instance of `rabbitmq` using  `docker` as follow
+   ```
+   docker run -d -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+   ```
 6. Create a queue as per the async api spec
 7. Publish a message to the queue as per the async api spec
 8. Check the output at the terminal where `go run main.go` was running and the published message should be printed
