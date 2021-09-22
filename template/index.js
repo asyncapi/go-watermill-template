@@ -6,7 +6,7 @@ function AMQPSubscriber() {
   return `
   amqpSubscriber, err := config.GetAMQPSubscriber(config.GetAMQPURI())
   if err != nil {
-    fmt.Printf("error creating amqpSubscriber: %s", err)
+    log.Fatalf("error creating amqpSubscriber: %s", err)
     return
   }
 
@@ -65,23 +65,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+  "log"
+  "os"
+  "os/signal"
+  "syscall"
 	"${params.moduleName}/config"
 )
 
 func main() {
-
   router, err := config.GetRouter()
   if err != nil {
-    fmt.Printf("error creating watermill router: %s", err)
+    log.Fatalf("error creating watermill router: %s", err)
     return
   }
 
   ${subscriberConfig}
 
-  ctx := context.Background()
+  ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+  defer stop()
   if err = router.Run(ctx); err != nil {
-    fmt.Printf("error running watermill router: %s", err)
+    log.Fatalf("error running watermill router: %s", err)
     return
   }
 }

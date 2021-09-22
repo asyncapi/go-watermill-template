@@ -3,8 +3,8 @@ import { pascalCase } from './common';
 
 let addHandlerFunction = (queue, operation) => `
   r.AddNoPublisherHandler(
-    "${operation}",          // handler name, must be unique
-    "${queue}", // topic from which we will read events
+    "${operation}",     // handler name, must be unique
+    "${queue}",         // topic from which we will read events
     s,
     handlers.${operation}, 
   )
@@ -27,6 +27,7 @@ export function Router({moduleName, channels, subscriberFlags}) {
   let amqpRules = ""
   if (subscriberFlags.hasAMQPSub) {
     amqpRules = `
+//ConfigureAMQPSubscriptionHandlers configures the router with the subscription handler    
 func ConfigureAMQPSubscriptionHandlers(r *message.Router, s message.Subscriber) {
 ${render(<AMQPRouterRules channels={channels} />)}
 }    
@@ -42,14 +43,10 @@ import (
 	"${moduleName}/handlers"
 )
 
+//GetRouter returns a watermill router 
 func GetRouter() (*message.Router, error){
-
 	logger := watermill.NewStdLogger(false, false)
-	router, err := message.NewRouter(message.RouterConfig{}, logger)
-	if err != nil {
-		return nil, err
-	}
-	return router, nil
+	return message.NewRouter(message.RouterConfig{}, logger)
 }
 
 ${amqpRules}

@@ -3,15 +3,14 @@ import { pascalCase } from './common';
 
 
 let subscriptionFunction = (channelName, operation, message) => `
-// subscription handler for ${channelName}        
+//${operation} subscription handler for ${channelName}        
 func ${operation}(msg *message.Message) error {
-
     log.Printf("received message payload: %s", string(msg.Payload))
 
     var lm payloads.${message}
     err := json.Unmarshal(msg.Payload, &lm)
     if err != nil {
-        fmt.Printf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
+        log.Fatalf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
         return err
     }
 
@@ -37,7 +36,6 @@ package handlers
 
 import (
     "encoding/json"
-    "fmt"
     "github.com/ThreeDotsLabs/watermill/message"
     "${moduleName}/payloads"
     "log"

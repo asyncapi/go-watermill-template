@@ -1,17 +1,14 @@
 //render an AMQP subscriber
 function AMQPSubscriber() {
     return `
+// GetAMQPSubscriber returns an amqp subscriber   
 func GetAMQPSubscriber(amqpURI string) (*amqp.Subscriber, error) {
     amqpConfig := amqp.NewDurableQueueConfig(amqpURI)
 
-    amqpSubscriber, err := amqp.NewSubscriber(
+    return amqp.NewSubscriber(
         amqpConfig,
         watermill.NewStdLogger(false, false),
     )
-    if err != nil {
-        return nil, err
-    }
-    return amqpSubscriber, nil
 }
     `
 }

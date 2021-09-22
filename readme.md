@@ -24,7 +24,7 @@ The good readme should be easy to navigate through, therefore remember to add `m
 The overview should explain in just a few sentences the template's purpose and its most essential features.
 -->
 
-This template generates a go lang module that uses [watermill](https://github.com/ThreeDotsLabs/watermill) as the messaging middleware
+This template generates a Go module that uses [watermill](https://github.com/ThreeDotsLabs/watermill) as the messaging middleware
 
 ## Technical requirements
 
@@ -130,7 +130,7 @@ components:
       type: userPassword
 ```
 
-#### Run the following command to generate a golang module
+#### Run the following command to generate a Go module
 
 ```bash
 npm install -g @asyncapi/generator
@@ -140,7 +140,7 @@ ag /path/to/asyncapi.yaml ./ -o /path/to/generated-code -p moduleName=your-go-mo
 
 #### How to use the generated code
 
-The above code currently generates a golang module that has a AMQP subscriber.
+The above code currently generates a Go module that has a AMQP subscriber.
 
 ##### Pre-requisites
 To run the generated code the following needs to be installed
@@ -157,7 +157,7 @@ go mod download
 go mod tidy
 ```
 3. Currently the code does not utilize the server bindings to generate the server URI. It is currently hardcoded to point to a local instance of `rabbitmq`. It is hardcoded as `"amqp://guest:guest@localhost:5672/"` at `<generated-code>/config/server.go`. Change it as per your rabbitmq instance requirements
-4. Finally navigate to the root folder of the generated code and run
+4. Finally to execute the code run
 ```bash
 go run main.go
 ```

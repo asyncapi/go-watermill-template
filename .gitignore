@@ -5,3 +5,4 @@ node_modules/*
 
 # Generated AsyncAPI output
 test/output/*
+ouput/*
