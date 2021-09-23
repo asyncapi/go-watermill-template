@@ -10,7 +10,7 @@ func ${operation}(msg *message.Message) error {
     var lm ${message}
     err := json.Unmarshal(msg.Payload, &lm)
     if err != nil {
-        fmt.Printf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
+        log.Printf("error unmarshalling message: %s, err is: %s", msg.Payload, err)
     }
     return nil
 }
@@ -34,7 +34,6 @@ package asyncapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/ThreeDotsLabs/watermill/message"
