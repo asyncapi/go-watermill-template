@@ -10,20 +10,19 @@ const _ = require('lodash');
  * }
  */
 export function GetProtocolFlags(asyncapi) {
-
-  let protocolFlags = {
+  const protocolFlags = {
     hasAMQP: false
-  }
+  };
 
   const channelEntries = Object.keys(asyncapi.channels()).length ? Object.entries(asyncapi.channels()) : [];
   //if there are no channels do nothing
   if (channelEntries.length === 0) {
-      return protocolFlags
+    return protocolFlags;
   }
 
   //if there are no amqp publisher or subscribers do nothing
-  let hasAMQP = channelEntries.filter(([channelName, channel]) => {
-      return (channel.hasPublish() || channel.hasSubscribe) && channel.bindings().amqp
+  const hasAMQP = channelEntries.filter(([channelName, channel]) => {
+    return (channel.hasPublish() || channel.hasSubscribe) && channel.bindings().amqp;
   }).length > 0;
 
   protocolFlags.hasAMQP = hasAMQP;
@@ -40,21 +39,20 @@ export function GetProtocolFlags(asyncapi) {
  *   "hasAMQPSub": true
  * }
  */
- export function GetSubscriberFlags(asyncapi) {
-
-  let subscriberFlags = {
+export function GetSubscriberFlags(asyncapi) {
+  const subscriberFlags = {
     hasAMQPSub: false
-  }
+  };
 
   const channelEntries = Object.keys(asyncapi.channels()).length ? Object.entries(asyncapi.channels()) : [];
   //if there are no channels do nothing
   if (channelEntries.length === 0) {
-      return subscriberFlags
+    return subscriberFlags;
   }
 
   //if there are no amqp publisher or subscribers do nothing
-  let hasAMQPSub = channelEntries.filter(([channelName, channel]) => {
-      return channel.hasPublish() && channel.bindings().amqp
+  const hasAMQPSub = channelEntries.filter(([channelName, channel]) => {
+    return channel.hasPublish() && channel.bindings().amqp;
   }).length > 0;
 
   subscriberFlags.hasAMQPSub = hasAMQPSub;

@@ -1,6 +1,5 @@
 import { File } from '@asyncapi/generator-react-sdk';
 
-
 //render an AMQP subscriber
 function AMQPSubscriber() {
   return `
@@ -10,7 +9,7 @@ function AMQPSubscriber() {
   }
 
   asyncapi.ConfigureAMQPSubscriptionHandlers(router, amqpSubscriber)
-  `
+  `;
 }
 
 /* 
@@ -25,41 +24,40 @@ function AMQPSubscriber() {
  * Notice that you can pass parameters to components. In fact, underneath, each component is a pure Javascript function.
  */
 export default function({ asyncapi, params }) {
-  
   const channelEntries = Object.keys(asyncapi.channels()).length ? Object.entries(asyncapi.channels()) : [];
   //if there are no channels do nothing
   if (channelEntries.length === 0) {
-      console.log("Since there are no channels in the asyncapi document no code is being generated")
-      return
+    console.log('Since there are no channels in the asyncapi document no code is being generated');
+    return;
   }
 
   //if there are no subscribers then do nothing
-  let hasAMQPSubscriber = channelEntries.filter(([channelName, channel]) => {
-      return channel.hasPublish() && channel.bindings().amqp
+  const hasAMQPSubscriber = channelEntries.filter(([channelName, channel]) => {
+    return channel.hasPublish() && channel.bindings().amqp;
   }).length > 0;
 
   if (!hasAMQPSubscriber) {
-      return
+    return;
   }
 
-  let subscriberFlags = {
-      hasAMQPSubscriber: hasAMQPSubscriber
-  }
+  const subscriberFlags = {
+    hasAMQPSubscriber
+  };
 
-  let subscribers = []
-  let subscriberConfig = ""
+  const subscribers = [];
+  let subscriberConfig = '';
 
   if (subscriberFlags.hasAMQPSubscriber) {
-    subscribers.push(AMQPSubscriber())
+    subscribers.push(AMQPSubscriber());
   }
 
-  if ( subscribers.length > 0 ) {
-    subscriberConfig = subscribers.join("\n")
+  if (subscribers.length > 0) {
+    subscriberConfig = subscribers.join('\n');
   }
 
   return (
     <File name="main.go">
-{`
+      {`
 package main
 
 import (

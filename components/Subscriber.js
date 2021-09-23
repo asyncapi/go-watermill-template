@@ -1,6 +1,6 @@
 //render an AMQP subscriber
 function AMQPSubscriber() {
-    return `
+  return `
 // GetAMQPSubscriber returns an amqp subscriber based on the URI   
 func GetAMQPSubscriber(amqpURI string) (*amqp.Subscriber, error) {
     amqpConfig := amqp.NewDurableQueueConfig(amqpURI)
@@ -10,30 +10,30 @@ func GetAMQPSubscriber(amqpURI string) (*amqp.Subscriber, error) {
         watermill.NewStdLogger(false, false),
     )
 }
-    `
+    `;
 }
   
 export function Subscriber({subscriberFlags}) {
-    let amqpMod = "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
+  const amqpMod = 'github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp';
 
-    let modules = []
-    let subscribers = []
-    let importMod = ""
-    let subscriberBlock = ""
-    if (subscriberFlags.hasAMQPSub) {
-        modules.push(amqpMod)
-        subscribers.push(AMQPSubscriber())
-    }
+  const modules = [];
+  const subscribers = [];
+  let importMod = '';
+  let subscriberBlock = '';
+  if (subscriberFlags.hasAMQPSub) {
+    modules.push(amqpMod);
+    subscribers.push(AMQPSubscriber());
+  }
 
-    if ( modules.length > 0 ) {
-        importMod = modules.map(m => `"${m}"`).join("\n")
-    }
+  if (modules.length > 0) {
+    importMod = modules.map(m => `"${m}"`).join('\n');
+  }
 
-    if ( subscribers.length > 0 ) {
-        subscriberBlock = subscribers.join("\n")
-    }
+  if (subscribers.length > 0) {
+    subscriberBlock = subscribers.join('\n');
+  }
 
-    return `
+  return `
 package asyncapi
 
 import (
@@ -42,5 +42,5 @@ import (
 )
 
 ${subscriberBlock}
-    `
+    `;
 }

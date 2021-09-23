@@ -3,15 +3,14 @@ import { Server } from '../../components/Server';
 import { GetProtocolFlags } from '../../components/common';
 
 export default async function({ asyncapi }) {
+  const protocolFlags = GetProtocolFlags(asyncapi);
+  if (!protocolFlags.hasAMQP) {
+    return;
+  }
 
-    let protocolFlags = GetProtocolFlags(asyncapi);
-    if (!protocolFlags.hasAMQP) {
-        return
-    }
-
-    return (
+  return (
     <File name="server.go">
-        <Server protocolFlags={protocolFlags} />    
+      <Server protocolFlags={protocolFlags} />    
     </File>
-    );
+  );
 }

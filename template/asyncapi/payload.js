@@ -1,4 +1,4 @@
-const {GoGenerator} = require('@asyncapi/modelina')
+const {GoGenerator} = require('@asyncapi/modelina');
 const { File } = require('@asyncapi/generator-react-sdk');
 
 export default async function({ asyncapi }) {
@@ -6,21 +6,21 @@ export default async function({ asyncapi }) {
     {
       struct: {
         field({ fieldName, field, renderer, type }) {
-            let formattedFieldName = renderer.nameField(fieldName, field);
-            let fieldType = renderer.renderType(field);
-            return `${ formattedFieldName } ${ fieldType } \`json:"${ fieldName }"\``;
+          const formattedFieldName = renderer.nameField(fieldName, field);
+          const fieldType = renderer.renderType(field);
+          return `${ formattedFieldName } ${ fieldType } \`json:"${ fieldName }"\``;
         },
       }
     }
   ] });
   const models = await generator.generate(asyncapi);
 
-  let payloadContent = "package asyncapi"
+  let payloadContent = 'package asyncapi';
   models.forEach(model => {
-    payloadContent = payloadContent + `
+    payloadContent += `
     ${model.dependencies.join('\n')}
     ${model.result}
-    `
+    `;
   });
 
   return (

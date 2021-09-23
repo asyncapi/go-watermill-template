@@ -1,8 +1,7 @@
 import { render } from '@asyncapi/generator-react-sdk';
 import { pascalCase } from './common';
 
-
-let subscriptionFunction = (channelName, operation, message) => `
+const subscriptionFunction = (channelName, operation, message) => `
 // ${operation} subscription handler for ${channelName}.        
 func ${operation}(msg *message.Message) error {
     log.Printf("received message payload: %s", string(msg.Payload))
@@ -17,19 +16,19 @@ func ${operation}(msg *message.Message) error {
 `;
 
 function SubscriptionHandlers({ channels }) {
-    return Object.entries(channels)
-            .map(([channelName, channel]) => {
-                if ( channel.hasPublish()) {
-                    let operation = pascalCase(channel.publish().id())
-                    let message = pascalCase(channel.publish().message(0).payload().$id())
-                    return  subscriptionFunction(channelName, operation, message);
-                }
-                return "";
-            });
+  return Object.entries(channels)
+    .map(([channelName, channel]) => {
+      if (channel.hasPublish()) {
+        const operation = pascalCase(channel.publish().id());
+        const message = pascalCase(channel.publish().message(0).payload().$id());
+        return  subscriptionFunction(channelName, operation, message);
+      }
+      return '';
+    });
 }
 
 export function Handlers({ moduleName, channels}) {
-return `
+  return `
 package asyncapi
 
 import (
@@ -39,5 +38,5 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 )
 ${render(<SubscriptionHandlers channels={channels} />)}
-`
+`;
 }

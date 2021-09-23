@@ -3,16 +3,15 @@ import { Subscriber } from '../../components/Subscriber';
 import { GetSubscriberFlags } from '../../components/common';
 
 export default async function({ asyncapi }) {
+  const subscriberFlags = GetSubscriberFlags(asyncapi);
 
-    let subscriberFlags = GetSubscriberFlags(asyncapi);
-
-    if (!subscriberFlags.hasAMQPSub) {
-        return
-    }
-
-    return (
-      <File name="subscribers.go">
-         <Subscriber subscriberFlags={subscriberFlags} />    
-      </File>
-    );
+  if (!subscriberFlags.hasAMQPSub) {
+    return;
   }
+
+  return (
+    <File name="subscribers.go">
+      <Subscriber subscriberFlags={subscriberFlags} />    
+    </File>
+  );
+}
