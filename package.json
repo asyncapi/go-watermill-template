@@ -8,11 +8,11 @@
     "testTemplate": "rimraf test/temp && jest --coverage -t 'templateGenerationResult'",
     "testHooks": "rimraf test/temp && jest --coverage -t 'generateExtraFormats'",
     "testFilters": "rimraf test/temp && jest --coverage -t 'generateMermaidDiagram'",
-    "release": "echo 'We do not trigger releases for this template. Normally this script should invoke \"semantic-release\"'",
+    "release": "semantic-release",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:assets": "npm run generate:readme:toc",
-    "bump:version": "echo 'We do not trigger releases for this template. Normally this script should invoke \"npm --no-git-tag-version --allow-same-version version $VERSION\"'"
+    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
   },
   "repository": {
     "type": "git",

@@ -25,7 +25,7 @@ This template must be used with the AsyncAPI Generator. You can find all availab
 
 ### CLI
 
-As of this initial commit this template has been tested to generate an AMQP subscriber for the asyncapi.yaml file located in the `test` folder
+This template has been tested to generate an AMQP subscriber for [this asyncapi.yaml file](./test/asyncapi.yaml)
 
 #### Run the following command to generate a Go module
 
