@@ -1,147 +1,43 @@
-<!--   
-The good readme should be easy to navigate through, therefore remember to add `markdown-toc` to devDependencies of your template and generate a table of contents by using the following script `"generate:readme:toc": "markdown-toc -i README.md"`
--->
-
-<!-- toc -->
-
 - [Overview](#overview)
 - [Technical requirements](#technical-requirements)
-- [Specification requirements](#specification-requirements)
 - [Supported protocols](#supported-protocols)
 - [How to use the template](#how-to-use-the-template)
   * [CLI](#cli)
-  * [Docker](#docker)
 - [Template configuration](#template-configuration)
-- [Custom hooks that you can disable](#custom-hooks-that-you-can-disable)
-- [Development](#development)
-- [Contributors](#contributors)
 
-<!-- tocstop -->
 
 ## Overview
-
-<!--  
-The overview should explain in just a few sentences the template's purpose and its most essential features.
--->
 
 This template generates a Go module that uses [watermill](https://github.com/ThreeDotsLabs/watermill) as the messaging middleware
 
 ## Technical requirements
 
-<!--  
-Specify what version of the Generator is your template compatible with. This information should match the information provided in the template configuration under the `generator` property.
--->
-
 - 1.1.0 =< [Generator](https://github.com/asyncapi/generator/) < 2.0.0,
 - Generator specific [requirements](https://github.com/asyncapi/generator/#requirements)
 
-## Specification requirements
-
-<!--  
-The template might need some AsyncAPI properties that normally are optional. For example code generator might require some specific binding information for a given protocol. Even though you can provide defaults or fallbacks, you should describe in the readme what is the most optimal set of properties that the user should provide in the AsyncAPI file.
--->
-
-The table contains information on parts of the specification required by this template to generate the proper output.
-
-Property name | Reason | Fallback | Default
----|---|---|---
-`components.schemas` | This template supports only schemas that have unique and human-readable names. Such names can also be provided if schemas are described under `components.schemas` and each schema is a separate object with its unique key. | - | -
-
 ## Supported protocols
-
-<!--  
-Specify what protocols is your code generator supporting. This information should match the information provided in the template configuration under the `supportedProtocols` property. Don't put this section in your readme if your template doesn't generate code.
--->
 
 Currently this template supports AMQP subscribers
 
 ## How to use the template
 
-<!--  
-Make sure it is easy to try out the template and check what it generates. Instructions for CLI and Docker should be easy to use; just copy/paste to the terminal. In other words, you should always make sure to have ready to use docker-compose set up so the user can quickly check how generated code behaves.
--->
-
 This template must be used with the AsyncAPI Generator. You can find all available options [here](https://github.com/asyncapi/generator/).
 
 ### CLI
 
-As of this initial commit this template has been tested to generate an AMQP subscriber for the following asyncapi.yml file
-
-```yaml
-asyncapi: '2.1.0'
-
-info:
-  title: Streetlights API
-  version: '1.0.0'
-  description: |
-    The Smartylighting Streetlights API allows you
-    to remotely manage the city lights.
-  license:
-    name: Apache 2.0
-    url: 'https://www.apache.org/licenses/LICENSE-2.0'
-
-defaultContentType: application/json
-
-servers:
-  local:
-    url: localhost:5672
-    protocol: amqp
-    security:
-      - user-password: []
-
-channels:
-  light/measured:
-    bindings:
-      amqp:
-        is: routingKey
-        queue:
-          name: light/measured
-          durable: true
-          exclusive: true
-          autoDelete: false
-          vhost: /
-        bindingVersion: 0.2.0
-    publish:
-      summary: Inform about environmental lighting conditions for a particular streetlight.
-      operationId: onLightMeasured
-      message:
-        name: LightMeasured
-        payload:
-          $id: LightMeasured
-          additionalProperties: false
-          type: object
-          properties:
-            id:
-              type: integer
-              minimum: 0
-              description: Id of the streetlight.
-            lumens:
-              type: integer
-              minimum: 0
-              description: Light intensity measured in lumens.
-            sentAt:
-              type: string
-              format: date-time
-              description: Date and time when the message was sent.
-
-components:
-  securitySchemes:
-    user-password:
-      type: userPassword
-```
+As of this initial commit this template has been tested to generate an AMQP subscriber for the asyncapi.yaml file located in the `test` folder
 
 #### Run the following command to generate a Go module
 
 ```bash
 npm install -g @asyncapi/generator
 # clone this repository and navigate to this repository
-ag /path/to/asyncapi.yaml ./ -o /path/to/generated-code -p moduleName=your-go-module-name -p goVersion=1.17
+ag test/asyncapi.yaml @asyncapi/go-watermill-template -o /path/to/generated-code -p moduleName=your-go-module-name
 ```
 
-There are 2 options that can be passed to the generator
+Following are the options that can be passed to the generator
 
 1. moduleName: name of the go module to be generated
-2. goVersion: version of Go to be specified in the go.mod file
 
 #### How to use the generated code
 
@@ -171,9 +67,44 @@ go run main.go
    ```
    docker run -d -p 15672:15672 -p 5672:5672 rabbitmq:3-management
    ```
-6. Create a queue as per the async api spec
-7. Publish a message to the queue as per the async api spec
+6. Create a queue as per the AsyncAPI spec. 
+   This can be done either of the following ways
+   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   ```
+    curl --user <rabbit-user>:<rabbit-password> -X PUT \
+      http://localhost:15672/api/queues/%2f/<queue-name> \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d '{
+    "auto_delete":false,
+    "durable":true
+    }'
+   ```
+7. Publish a message to the queue as per the AsyncAPI spec. This can be done either of the following ways
+   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   ```
+    curl --user <rabbit-user>:<rabbit-password> -X POST \
+      http://localhost:15672/api/exchanges/%2f/amq.default/publish \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d ' {
+    "properties":{},
+    "routing_key":"light/measured",
+    "payload":"{\"id\":1,\"lumens\":2,\"sentAt\":\"2021-09-21\"}",
+    "payload_encoding":"string"
+    }'
+   ```
 8. Check the output at the terminal where `go run main.go` was running and the published message should be printed
+
+## Template configuration
+
+You can configure this template by passing different parameters in the Generator CLI: `-p PARAM1_NAME=PARAM1_VALUE -p PARAM2_NAME=PARAM2_VALUE`
+
+|Name|Description|Required|Example|
+|---|---|---|---|
+|moduleName|Name for the generated Go module|false|`my-app`|
 
 
 
