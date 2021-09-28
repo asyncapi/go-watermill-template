@@ -69,8 +69,8 @@ go run main.go
    ```
 6. Create a queue as per the AsyncAPI spec. 
    This can be done either of the following ways
-   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
-   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   -  Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   - `cURL` request. Default rabbitmq user is `guest` and password is `guest`
    ```
     curl --user <rabbit-user>:<rabbit-password> -X PUT \
       http://localhost:15672/api/queues/%2f/<queue-name> \
@@ -82,8 +82,8 @@ go run main.go
     }'
    ```
 7. Publish a message to the queue as per the AsyncAPI spec. This can be done either of the following ways
-   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
-   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   - Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   - `cURL` request. Default rabbitmq user is `guest` and password is `guest`
    ```
     curl --user <rabbit-user>:<rabbit-password> -X POST \
       http://localhost:15672/api/exchanges/%2f/amq.default/publish \
@@ -105,8 +105,3 @@ You can configure this template by passing different parameters in the Generator
 |Name|Description|Required|Example|
 |---|---|---|---|
 |moduleName|Name for the generated Go module|false|`my-app`|
-
-
-
-
-

@@ -1,0 +1,10 @@
+# .gitignore
+
+# Node dependencies
+node_modules/*
+
+# Generated AsyncAPI output
+test/output/*
+output/*
+.DS_Store
+__transpiled
