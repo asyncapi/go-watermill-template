@@ -23,7 +23,7 @@ export default function({ asyncapi, params }) {
       {`
 module ${params.moduleName}
 
-go ${params.goVersion}
+go 1.16
 
 require (
   github.com/ThreeDotsLabs/watermill v1.1.1
