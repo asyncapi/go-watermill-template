@@ -1,161 +1,112 @@
-# AsyncAPI To-Go! :package: 
+- [Overview](#overview)
+- [Technical requirements](#technical-requirements)
+- [Supported protocols](#supported-protocols)
+- [How to use the template](#how-to-use-the-template)
+  * [CLI](#cli)
+- [Template configuration](#template-configuration)
 
-Do you bang your head against the wall writing event driven microservices?  
-Well now you you can bang your head faster!
 
-To-Go helps produce the code behind your event-driven operations by transforming AsyncAPI specs **To Go**
+## Overview
 
-## What is it?
-AsyncAPI To-Go is a code generation template for the [AsyncAPI generator](https://github.com/asyncapi/generator) that can be used to generate boilerplate Go code for interacting with event-driven architectures. 
+This template generates a Go module that uses [watermill](https://github.com/ThreeDotsLabs/watermill) as the messaging middleware
 
-The generator consumes an [**AsyncAPI 2.0**](https://www.asyncapi.com/docs/specifications/2.0.0/) YAML or JSON specification file and uses this template to produce matching channel constants, message payload structs, and (W.I.P.) ~~optionally, logic to wrap it into a lightweight library.~~ The underlying transport layer interface enables pluggable support for most messaging system (Kafka, MQTT, AMPQ, etc.).
+## Technical requirements
 
-The template provides switches to allow for different levels of generation. More information can be found at [generation levels](#generation-levels)
-* Channel parsing / generation with parameter structs
-* Schema and Message definitions
-* ~~Content Type parsing with the ability to extend supported content types~~ (Soon)
-* A transport interface to support various underlying event messaging protocols
-* ~~A simple wrapping framework to provide AsyncAPI *operations* as high-level functions~~ (Very Soon)
+- 1.1.0 =< [Generator](https://github.com/asyncapi/generator/) < 2.0.0,
+- Generator specific [requirements](https://github.com/asyncapi/generator/#requirements)
 
-## What Am I Getting Myself Into? 
-Code Samples:
+## Supported protocols
 
-Channel Building / Parsing
-```go
-p := &channel.TurnOnParams{"<my-id>"}
-p.Build() // Returns: "smartylighting/streetlights/1/0/action/<my-id>/turn/on"
+Currently this template supports AMQP subscribers
 
-p := &channel.ReceiveLightMeasurementParams{}
-err := p.Parse("smartylighting/streetlights/1/0/event/(.+)/lighting/measured")
-// Populates p with channel parameters
-// p = { StreetlightId: "<my-id>" }
+## How to use the template
+
+This template must be used with the AsyncAPI Generator. You can find all available options [here](https://github.com/asyncapi/generator/).
+
+### CLI
+
+This template has been tested to generate an AMQP subscriber for [this asyncapi.yaml file](./test/asyncapi.yaml)
+
+#### Run the following command to generate a Go module
+
+```bash
+npm install -g @asyncapi/generator
+# clone this repository and navigate to this repository
+ag test/asyncapi.yaml @asyncapi/go-watermill-template -o /path/to/generated-code -p moduleName=your-go-module-name
 ```
 
-## Getting Started
+Following are the options that can be passed to the generator
 
-### Dependencies:
-The AsyncAPI Generation tool is required to execute this template. Find it here : https://github.com/asyncapi/generator/#install-the-cli.
+1. moduleName: name of the go module to be generated
 
-1. Install AsyncAPI Generation tool
-	```bash
-	$ npm install -g @asyncapi/generator
-	```
-2. Clone the template to wherever you like
-	```bash
-	$ cd ~/dev/tools/
-	$ git clone https://github.com/asyncapi/go-template.git
-	```
-3. Run the generator.  
-	Arguments:
-	* The path to your Async specification file
-	* The path to the template folder of this repo
-	* Destination directory for output
-	```
-	$ ag ./asyncapi.yaml ~/dev/tools/go-template/template -o ./<dest-dir>
-	```
+#### How to use the generated code
 
-## What does the generation look like? 
-Examples based on the Streetlights example specification
+The above code currently generates a Go module that has a AMQP subscriber.
 
-#### Message Sample
-```golang
-//   Location: message/<msg_name/id>.go
+##### Pre-requisites
+To run the generated code the following needs to be installed
 
+1. go 1.16 +
+2. rabbitmq-server OR docker
 
-// DimLight is used to command a particular streetlight to dim the lights.
-type DimLight struct {
-	transport.Message
+##### Running the code
 
-	// ContentType indicates the specified MIME type for this message. If empty, the defaultContentType should be used 
-	ContentType string
-	
-	// Payload contains the content defined by the payload AsyncAPI field
-	Payload model.DimLightPayload
-}
+1. Navigate to the path where the code was generated
+2. Run the following commands to download the dependencies
+```bash
+go mod download
+go mod tidy
 ```
-#### Schema Sample
-```golang
-//   Location: model/<schema_name>.go
-
-// DimLightPayload is a Schema defined in the AsyncAPI specification
-type DimLightPayload struct {
-    // Percentage is a property defined in the AsyncAPI specification
-    Percentage *int64 `json:"percentage"`
-
-    // SentAt is a property defined in the AsyncAPI specification
-    SentAt *SentAt `json:"sentAt"`
-}
-
-
-func NewDimLightPayload() *DimLightPayload {
-
-    return &DimLightPayload{
-    }
-}
+3. Currently the code does not utilize the server bindings to generate the server URI. It is currently hardcoded to point to a local instance of `rabbitmq`. It is hardcoded as `"amqp://guest:guest@localhost:5672/"` at `<generated-code>/config/server.go`. Change it as per your rabbitmq instance requirements
+4. Finally to execute the code run
+```bash
+go run main.go
 ```
-#### Channel Parameters Sample
-```golang
-//   definitions:   channel/parameters.go
-//   builder funcs: channel/builder.go
-//   parser funcs:  channel/parser.go
+5. Running local instance of `rabbitmq`, navigate to it using `http://localhost:15672/` with username and password `guest`/ `guest` (These are default rabbitmq credentials). 
+   FYI one can start an instance of `rabbitmq` using  `docker` as follow
+   ```
+   docker run -d -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+   ```
+6. Create a queue as per the AsyncAPI spec. 
+   This can be done either of the following ways
+   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   ```
+    curl --user <rabbit-user>:<rabbit-password> -X PUT \
+      http://localhost:15672/api/queues/%2f/<queue-name> \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d '{
+    "auto_delete":false,
+    "durable":true
+    }'
+   ```
+7. Publish a message to the queue as per the AsyncAPI spec. This can be done either of the following ways
+   a. Using the UI: Refer to this [article](https://www.cloudamqp.com/blog/part3-rabbitmq-for-beginners_the-management-interface.html) that walks through the process of how this can be done in the UI / RabbitMQ Admin 
+   b. `cURL` request. Default rabbitmq user is `guest` and password is `guest`
+   ```
+    curl --user <rabbit-user>:<rabbit-password> -X POST \
+      http://localhost:15672/api/exchanges/%2f/amq.default/publish \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d ' {
+    "properties":{},
+    "routing_key":"light/measured",
+    "payload":"{\"id\":1,\"lumens\":2,\"sentAt\":\"2021-09-21\"}",
+    "payload_encoding":"string"
+    }'
+   ```
+8. Check the output at the terminal where `go run main.go` was running and the published message should be printed
 
-// TurnOnParams holds the channel parameters used by the TurnOn operation
-type TurnOnParams = struct {
-	// StreetlightId is the ID of the streetlight.
-	StreetlightId string
-}
+## Template configuration
 
-// Parse populates the fields of a TestMyThingParams instance with values 
-// extracted from a channel
-func (params *TestMyThingParams) Parse(ch string) error {
-	match := SubscribeTestMyThingRegex.FindStringSubmatch(ch)
-	if len(match) < 2 {
-		return errors.New("channel did not match expected format: " + ch)
-	}
+You can configure this template by passing different parameters in the Generator CLI: `-p PARAM1_NAME=PARAM1_VALUE -p PARAM2_NAME=PARAM2_VALUE`
 
-	// Map the struct fields to the order they will appear in the topic
-	fields := []*string{&params.StreetlightId,&params.Action}
+|Name|Description|Required|Example|
+|---|---|---|---|
+|moduleName|Name for the generated Go module|false|`my-app`|
 
-	for i, field := range fields {
-		// Populate params fields - skipping the first index of 'match' as 
-		// captured groups start at index=1
-		*field = match[i+1]
-	}
 
-	return nil
-}
 
-// Build uses TurnOnParams to build the channel required for TurnOn operations
-func (params TurnOnParams) Build() string {
-	const ch string = "smartylighting/streetlights/1/0/action/{streetlightId}/turn/on"
-	r := strings.NewReplacer("{streetlightId}",params.StreetlightId)
 
-	return r.Replace(ch)
-}
 
-```
-#### Controller Sample
-```golang
-//   Locations: controller.go
-
-// TurnOff implements operation.Producer
-func (c Controller) TurnOff(params channel.TurnOffParams, msg message.TurnOnOff) error {
-	// Define any operation bindings. These are constant per operation
-    var mqtt5Bindings = map[string]interface{} {"qos":1,"retain":true,"bindingVersion": "0.0.1",}
-
-	// Throw error for missing content type encoder
-	w := c.getWriter(msg.ContentType)
-	if w == nil {
-		return errors.New("no message writer is registered for content type: " + msg.ContentType)
-	}
-
-	// Throw error if failed to encode payload
-	if msg.RawPayload, err := w.Write(msg.Payload) {
-		return err
-	}
-
-	// Publish the underlying transport.Message with the transport layer
-	return c.async.Publish(params.Build(), mag.Message, kafkaBindings)
-}
-
-```
