@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run testTemplate && npm run testHooks && npm run testFilters",
-    "testTemplate": "rimraf test/temp && jest --coverage -t 'templateGenerationResult'",
-    "testHooks": "rimraf test/temp && jest --coverage -t 'generateExtraFormats'",
-    "testFilters": "rimraf test/temp && jest --coverage -t 'generateMermaidDiagram'",
+    "testTemplate": "rimraf test/temp && jest --coverage -t 'templateGenerationResult' --passWithNoTests",
+    "testHooks": "rimraf test/temp && jest --coverage -t 'generateExtraFormats' --passWithNoTests",
+    "testFilters": "rimraf test/temp && jest --coverage -t 'generateMermaidDiagram' --passWithNoTests",
     "release": "semantic-release",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
