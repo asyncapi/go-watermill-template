@@ -30,13 +30,10 @@
   },
   "homepage": "https://github.com/asyncapi/go-template#readme",
   "dependencies": {
-    "@asyncapi/generator": "^1.8.0",
-    "@asyncapi/parser": "^1.6.0",
     "@asyncapi/generator-filters": "^2.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "@asyncapi/generator-react-sdk": "^0.2.11",
-    "@asyncapi/modelina": "^0.31.0",
-    "@babel/core": "^7.13.0"
+    "@asyncapi/modelina": "^0.31.0"
   },
   "release": {
     "branches": [
