@@ -1,6 +1,6 @@
 {
   "name": "go-template",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
