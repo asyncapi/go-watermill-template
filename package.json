@@ -1,5 +1,5 @@
 {
-  "name": "@asyncapi/ts-nats-template",
+  "name": "@asyncapi/go-watermill-template",
   "version": "0.1.7",
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
