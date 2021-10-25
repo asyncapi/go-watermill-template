@@ -1,5 +1,5 @@
 {
-  "name": "go-template",
+  "name": "@asyncapi/go-watermill-template",
   "version": "0.1.7",
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asyncapi/go-template"
+    "url": "git+https://github.com/asyncapi/go-watermill-template"
   },
   "keywords": [
     "asyncapi",
@@ -26,9 +26,9 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/asyncapi/go-template/issues"
+    "url": "https://github.com/asyncapi/go-watermill-template"
   },
-  "homepage": "https://github.com/asyncapi/go-template#readme",
+  "homepage": "https://github.com/asyncapi/go-watermill-template#readme",
   "dependencies": {
     "@asyncapi/generator-filters": "^2.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
