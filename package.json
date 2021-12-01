@@ -32,7 +32,7 @@
   "dependencies": {
     "@asyncapi/generator-filters": "^2.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
-    "@asyncapi/generator-react-sdk": "^0.2.22",
+    "@asyncapi/generator-react-sdk": "^0.2.23",
     "@asyncapi/modelina": "^0.39.6"
   },
   "release": {
@@ -70,19 +70,19 @@
     ]
   },
   "devDependencies": {
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/github": "^7.0.7",
+    "@semantic-release/npm": "^7.0.5",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "all-contributors-cli": "^6.19.0",
+    "conventional-changelog-conventionalcommits": "^4.4.0",
     "eslint": "^6.8.0",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-sonarjs": "^0.5.0",
-    "semantic-release": "^17.1.1",
-    "@semantic-release/commit-analyzer": "^8.0.1",
-    "@semantic-release/github": "^7.0.7",
-    "@semantic-release/npm": "^7.0.5",
-    "@semantic-release/release-notes-generator": "^9.0.1",
-    "conventional-changelog-conventionalcommits": "^4.4.0",
-    "all-contributors-cli": "^6.19.0",
-    "markdown-toc": "^1.2.0"
+    "markdown-toc": "^1.2.0",
+    "semantic-release": "^17.1.1"
   },
   "jest": {
     "transform": {
