@@ -4,12 +4,13 @@
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"no test specified yet\"",
+    "test": "npm run testComponents",
     "release": "semantic-release",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:assets": "npm run generate:readme:toc",
-    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
+    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION",
+    "testComponents": "rimraf test/temp && jest --coverage ./test/components"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "@asyncapi/generator-hooks": "^0.1.0",
     "@asyncapi/generator-react-sdk": "^0.2.23",
     "@asyncapi/modelina": "^0.46.0"
+    "rimraf": "^3.0.2"
   },
   "release": {
     "branches": [
@@ -81,16 +83,20 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-sonarjs": "^0.5.0",
+    "jest": "^27.4.7",
     "markdown-toc": "^1.2.0",
     "semantic-release": "^17.1.1"
   },
-  "jest": {
-    "transform": {
-      "\\.m?jsx?$": "jest-esm-transformer"
-    },
-    "collectCoverageFrom": [
-      "{filters,hooks}/**/*.js",
-      "!hooks/generateExtraFormats.js"
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
     ]
   }
 }
