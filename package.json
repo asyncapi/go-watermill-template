@@ -4,13 +4,13 @@
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
-    "test": "npm run testComponents",
+    "test": "npm run test:components",
     "release": "semantic-release",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:assets": "npm run generate:readme:toc",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION",
-    "testComponents": "rimraf test/temp && jest --coverage ./test/components"
+    "test:components": "jest --coverage ./test/components"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,38 @@
+asyncapi: '2.1.0'
+
+info:
+  title: Streetlights API
+  version: '1.0.0'
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+
+defaultContentType: application/json
+
+servers:
+  local:
+    url: localhost:5672
+    protocol: amqp
+    security:
+      - user-password: []
+
+channels:
+  light/measured:
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: light/measured
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.2.0
+
+components:
+  securitySchemes:
+    user-password:
+      type: userPassword

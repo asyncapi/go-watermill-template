@@ -1,143 +1,63 @@
 import { GetProtocolFlags, GetSubscriberFlags, pascalCase } from '../../components/common';
 import AsyncAPIDocument from '@asyncapi/parser/lib/models/asyncapi';
+import parser from '@asyncapi/parser'
+import fs from 'fs'
+import path from 'path'
 
-const docWithoutChannels = new AsyncAPIDocument({
-  asyncapi: '2.1.0',
-  info: {
-    title: "Streetlights API",
-    version: '1.0.0',
-    description: "The Smartylighting Streetlights API",
-  }
-});
-
-const docWithChannels = new AsyncAPIDocument({
-  asyncapi: '2.1.0',
-  info: {
-    title: "Streetlights API",
-    version: '1.0.0',
-    description: "The Smartylighting Streetlights API",
-  },
-  channels: {
-    "light/measured": {
-      bindings: {
-        amqp: {
-          is: "routingKey",
-          queue: {
-            name: "light/measured",
-            durable: true,
-            exclusive: true,
-            autoDelete: false,
-            vhost: "/"
-          },
-          bindingVersion: "0.2.0"
-        }
-      }
-    }
-  }
-});
-
-const docWithAMQPPublisher = new AsyncAPIDocument({
-  asyncapi: '2.1.0',
-  info: {
-    title: "Streetlights API",
-    version: '1.0.0',
-    description: "The Smartylighting Streetlights API",
-  },
-  channels: {
-    "light/measured": {
-      bindings: {
-        amqp: {
-          is: "routingKey",
-          queue: {
-            name: "light/measured",
-            durable: true,
-            exclusive: true,
-            autoDelete: false,
-            vhost: "/"
-          },
-          bindingVersion: "0.2.0"
-        }
-      },
-      publish: {
-        summary: "Inform about environmental lighting conditions for a particular streetlight",
-        operationId: "onLightMeaasured",
-        message: {
-          name: "LightMeasured",
-          payload: {
-            "$id": "LightMeasured",
-            additionalProperties: false,
-            type: "object",
-            properties: {
-              id: {
-                type: "integer",
-                minimum: 0,
-                description : "Id of the streetlight."
-              },
-              lumens: {
-                type: "integer",
-                minimum: 0,
-                description: "Light intensity measured in lumens."
-              },
-              sentAt: {
-                type: "string",
-                format: "date-time",
-                description: "Date and time when the message was sent."
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-});
+const docWithoutProtocols = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutProtocols.yml'), 'utf8');
+const docWithAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPublisher.yml'), 'utf8');
+const docWithoutAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutAMQPublisher.yml'), 'utf8');
 
 describe('GetProtocolFlags', () => {
 
-  it('should return protocols as false when no channels are present ', () => {
+  it('should return protocols as false when no channels are present ', async function() {
     const expected = {
       hasAMQP: false
     };
 
-    const result = GetProtocolFlags(docWithoutChannels);
+    const doc = await parser.parse(docWithoutProtocols);
+    const result = GetProtocolFlags(doc);
     expect(result).toEqual(expected);
   })
 
-  it('should return amqp as true when channels with amqp bindings are present ', () => {
+  it('should return amqp as true when channels with amqp bindings are present ', async function() {
     const expected = {
       hasAMQP: true
     };
 
-    const result = GetProtocolFlags(docWithChannels);
+    const doc = await parser.parse(docWithoutAMQPublisher);
+    const result = GetProtocolFlags(doc);
     expect(result).toEqual(expected);
   })
 
 })
 
 describe('GetSubscriberFlags', () => {
-  it('should return subscriberFlags as false when no channels are present ', () => {
+  it('should return subscriberFlags as false when no channels are present ', async function() {
     const expected = {
       hasAMQPSub: false
     };
 
-    const result = GetSubscriberFlags(docWithoutChannels);
+    const doc = await parser.parse(docWithoutProtocols);
+    const result = GetSubscriberFlags(doc);
     expect(result).toEqual(expected);
   })
 
-  it('should return subscriberFlags as false when publish channels are NOT present', () => {
+  it('should return subscriberFlags as false when publish channels are NOT present', async function() {
     const expected = {
       hasAMQPSub: false
     };
-
-    const result = GetSubscriberFlags(docWithChannels);
+    const doc = await parser.parse(docWithoutAMQPublisher);
+    const result = GetSubscriberFlags(doc);
     expect(result).toEqual(expected);
   })
 
-  it('should return subscriberFlags as true when publish channels are present', () => {
+  it('should return subscriberFlags as true when publish channels are present', async function() {
     const expected = {
       hasAMQPSub: true
     };
-
-    const result = GetSubscriberFlags(docWithAMQPPublisher);
+    const doc = await parser.parse(docWithAMQPublisher);
+    const result = GetSubscriberFlags(doc);
     expect(result).toEqual(expected);
   })
 })
