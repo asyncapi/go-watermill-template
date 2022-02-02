@@ -4,12 +4,13 @@
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"no test specified yet\"",
+    "test": "npm run test:components",
     "release": "semantic-release",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:assets": "npm run generate:readme:toc",
-    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
+    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION",
+    "test:components": "jest --coverage ./test/components"
   },
   "repository": {
     "type": "git",
@@ -81,16 +82,20 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-sonarjs": "^0.5.0",
+    "jest": "^27.4.7",
     "markdown-toc": "^1.2.0",
     "semantic-release": "^17.1.1"
   },
-  "jest": {
-    "transform": {
-      "\\.m?jsx?$": "jest-esm-transformer"
-    },
-    "collectCoverageFrom": [
-      "{filters,hooks}/**/*.js",
-      "!hooks/generateExtraFormats.js"
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
     ]
   }
 }
