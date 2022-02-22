@@ -26,7 +26,7 @@ export function GetProtocolFlags(asyncapi) {
   }).length > 0;
 
   protocolFlags.hasAMQP = hasAMQP;
-  
+
   return protocolFlags;
 }
 
@@ -56,8 +56,38 @@ export function GetSubscriberFlags(asyncapi) {
   }).length > 0;
 
   subscriberFlags.hasAMQPSub = hasAMQPSub;
-  
+
   return subscriberFlags;
+}
+
+/**
+ * Input: parsed asyncapi object
+ * Output: object which indicates what protocols have publishers
+ * Curently supports AMQP alone
+ * Example Output:
+ * {
+ *   "hasAMQPPub": true
+ * }
+ */
+export function GetPublisherFlags(asyncapi) {
+  const publisherFlags = {
+    hasAMQPPub: false
+  };
+
+  const channelEntries = Object.keys(asyncapi.channels()).length ? Object.entries(asyncapi.channels()) : [];
+  //if there are no channels do nothing
+  if (channelEntries.length === 0) {
+    return publisherFlags;
+  }
+
+  //if there are no amqp publisher or subscribers do nothing
+  const hasAMQPPub = channelEntries.filter(([channelName, channel]) => {
+    return channel.hasSubscribe() && channel.bindings().amqp;
+  }).length > 0;
+
+  publisherFlags.hasAMQPPub = hasAMQPPub;
+
+  return publisherFlags;
 }
 
 export function pascalCase(string) {
