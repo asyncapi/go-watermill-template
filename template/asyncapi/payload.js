@@ -16,12 +16,31 @@ export default async function({ asyncapi }) {
   const models = await generator.generate(asyncapi);
 
   let payloadContent = 'package asyncapi';
+
+  let payloadUtils = `
+
+// PayloadToMessage converts a payload to watermill message
+func PayloadToMessage(i interface{}) (message.Message, error) {
+  var m message.Message
+
+  b, err := json.Marshal(i)
+  if err != nil {
+    return m, nil
+  }
+  m.Payload = b
+
+  return m, nil
+}
+  `;
+
   models.forEach(model => {
     payloadContent += `
     ${model.dependencies.join('\n')}
     ${model.result}
     `;
   });
+
+  payloadContent += payloadUtils
 
   return (
     <File name="payloads.go">
