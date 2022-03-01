@@ -50,10 +50,10 @@ components:
     lightMeasured:
       name: LightMeasured
       payload:
-        $ref: "#/components/schemas/lightMeasuredPayload"
+        $ref: "#/components/schemas/lightMeasured"
 
   schemas:
-    lightMeasuredPayload:
+    lightMeasured:
       type: object
       properties:
         id:

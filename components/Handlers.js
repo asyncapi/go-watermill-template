@@ -20,7 +20,7 @@ function SubscriptionHandlers({ channels }) {
     .map(([channelName, channel]) => {
       if (channel.hasPublish()) {
         const operation = pascalCase(channel.publish().id());
-        const msgName = channel.publish().message(0).name();
+        const msgName = channel.publish().message(0).uid();
         const message = pascalCase(msgName);
         return  subscriptionFunction(channelName, operation, message);
       }
