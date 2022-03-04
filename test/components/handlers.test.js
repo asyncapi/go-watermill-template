@@ -84,16 +84,21 @@ func TempPublish(a *amqp.Publisher, payload TempMeasured) error {
 
 describe('Imports', () => {
   it('should return imports for subscribers', async function() {
-    const expected = ''
+    const expected = `
+    "encoding/json"
+  "github.com/ThreeDotsLabs/watermill/message"
+    `
     const doc = await parser.parse(docWithAMQPublisher);
     const result = Imports(doc.channels())
-    expect(result).toEqual(expected.trim())
+    expect(result.trim()).toEqual(expected.trim())
   })
 
   it('should return imports for publishers', async function() {
-    const expected = ''
+    const expected = `
+    "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
+    `
     const doc = await parser.parse(docWithAMQPSubscriber)
     const result = Imports(doc.channels())
-    expect(result).toEqual(expected.trim())
+    expect(result.trim()).toEqual(expected.trim())
   })
 })

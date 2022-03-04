@@ -60,26 +60,23 @@ func ${operation}(a *amqp.Publisher, payload ${message}) error {
 
 export function Imports(channels) {
   // console.log(JSON.stringify(channels))
+  let dependencies = new Set()
+  for (const [channelName, channel] of Object.entries(channels)) {
+    // console.log(`${key}: ${value}`);
+    if (channel.hasPublish()) {
+      dependencies.add(`
+  "encoding/json"
+  "github.com/ThreeDotsLabs/watermill/message"`)
+    }
 
-  return Object.entries(channels)
-    .map(([channelName, channel]) => {
-      let dependencies = ''
-      if (channel.hasPublish()) {
-        dependencies += `
-    "encoding/json"
-    "github.com/ThreeDotsLabs/watermill/message"
-        `
+    if (channel.hasSubscribe()) {
+      if (channel.bindings().amqp) {
+        dependencies.add(`
+  "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"`)
       }
-
-      if (channel.hasSubscribe()) {
-        if (channel.bindings().amqp) {
-          dependencies += `
-    "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
-      `
-        }
-      }
-      return dependencies
-    });
+    }
+  }
+  return [...dependencies].join('\n')
 }
 
 
