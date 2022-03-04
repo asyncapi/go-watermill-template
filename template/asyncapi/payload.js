@@ -15,7 +15,15 @@ export default async function({ asyncapi }) {
   ] });
   const models = await generator.generate(asyncapi);
 
-  let payloadContent = 'package asyncapi';
+  let payloadContent = `
+  package asyncapi
+
+  import (
+    "encoding/json"
+
+    "github.com/ThreeDotsLabs/watermill/message"
+  )
+  `
 
   let payloadUtils = `
 
