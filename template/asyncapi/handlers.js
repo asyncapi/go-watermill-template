@@ -6,10 +6,10 @@ export default async function({ asyncapi, params }) {
   if (asyncapi.channels().length === 0) {
     return;
   }
-  
+
   return (
     <File name="handlers.go">
-      <Handlers moduleName={params.moduleName} channels={asyncapi.channels()} />    
+      <Handlers channels={asyncapi.channels()} />
     </File>
   );
 }

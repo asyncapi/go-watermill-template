@@ -1,5 +1,4 @@
 import { GetProtocolFlags, GetSubscriberFlags, pascalCase } from '../../components/common';
-import AsyncAPIDocument from '@asyncapi/parser/lib/models/asyncapi';
 import parser from '@asyncapi/parser'
 import fs from 'fs'
 import path from 'path'

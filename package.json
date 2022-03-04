@@ -72,6 +72,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.16.7",
     "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/github": "^7.0.7",
     "@semantic-release/npm": "^7.0.5",
@@ -95,6 +96,12 @@
           "targets": {
             "node": "current"
           }
+        }
+      ],
+      [
+        "@babel/preset-react",
+        {
+          "runtime": "automatic"
         }
       ]
     ]

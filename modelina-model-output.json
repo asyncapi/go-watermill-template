@@ -1,0 +1,400 @@
+[
+  {
+    "result": "// LightMeasured represents a LightMeasured model.\ntype LightMeasured struct {\n  Id int `json:\"id\"`\n  Lumens int `json:\"lumens\"`\n  SentAt string `json:\"sentAt\"`\n  AdditionalProperties []interface{} `json:\"additionalProperties\"`\n}",
+    "model": {
+      "originalInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Id of the streetlight.",
+            "x-parser-schema-id": "<anonymous-schema-1>",
+            "x-modelgen-inferred-name": "<anonymous-schema-1>"
+          },
+          "lumens": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Light intensity measured in lumens.",
+            "x-parser-schema-id": "<anonymous-schema-2>",
+            "x-modelgen-inferred-name": "<anonymous-schema-2>"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when the message was sent.",
+            "x-parser-schema-id": "<anonymous-schema-3>",
+            "x-modelgen-inferred-name": "<anonymous-schema-3>"
+          }
+        },
+        "x-parser-schema-id": "lightMeasured",
+        "x-modelgen-inferred-name": "lightMeasured"
+      },
+      "type": "object",
+      "additionalProperties": {
+        "originalInput": true,
+        "type": [
+          "object",
+          "string",
+          "number",
+          "array",
+          "boolean",
+          "null",
+          "integer"
+        ]
+      },
+      "properties": {
+        "id": {
+          "originalInput": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Id of the streetlight.",
+            "x-parser-schema-id": "<anonymous-schema-1>",
+            "x-modelgen-inferred-name": "<anonymous-schema-1>"
+          },
+          "type": "integer"
+        },
+        "lumens": {
+          "originalInput": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Light intensity measured in lumens.",
+            "x-parser-schema-id": "<anonymous-schema-2>",
+            "x-modelgen-inferred-name": "<anonymous-schema-2>"
+          },
+          "type": "integer"
+        },
+        "sentAt": {
+          "originalInput": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when the message was sent.",
+            "x-parser-schema-id": "<anonymous-schema-3>",
+            "x-modelgen-inferred-name": "<anonymous-schema-3>"
+          },
+          "type": "string"
+        }
+      },
+      "$id": "lightMeasured"
+    },
+    "modelName": "LightMeasured",
+    "inputModel": {
+      "models": {
+        "lightMeasured": {
+          "originalInput": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Id of the streetlight.",
+                "x-parser-schema-id": "<anonymous-schema-1>",
+                "x-modelgen-inferred-name": "<anonymous-schema-1>"
+              },
+              "lumens": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Light intensity measured in lumens.",
+                "x-parser-schema-id": "<anonymous-schema-2>",
+                "x-modelgen-inferred-name": "<anonymous-schema-2>"
+              },
+              "sentAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Date and time when the message was sent.",
+                "x-parser-schema-id": "<anonymous-schema-3>",
+                "x-modelgen-inferred-name": "<anonymous-schema-3>"
+              }
+            },
+            "x-parser-schema-id": "lightMeasured",
+            "x-modelgen-inferred-name": "lightMeasured"
+          },
+          "type": "object",
+          "additionalProperties": {
+            "originalInput": true,
+            "type": [
+              "object",
+              "string",
+              "number",
+              "array",
+              "boolean",
+              "null",
+              "integer"
+            ]
+          },
+          "properties": {
+            "id": {
+              "originalInput": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Id of the streetlight.",
+                "x-parser-schema-id": "<anonymous-schema-1>",
+                "x-modelgen-inferred-name": "<anonymous-schema-1>"
+              },
+              "type": "integer"
+            },
+            "lumens": {
+              "originalInput": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Light intensity measured in lumens.",
+                "x-parser-schema-id": "<anonymous-schema-2>",
+                "x-modelgen-inferred-name": "<anonymous-schema-2>"
+              },
+              "type": "integer"
+            },
+            "sentAt": {
+              "originalInput": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Date and time when the message was sent.",
+                "x-parser-schema-id": "<anonymous-schema-3>",
+                "x-modelgen-inferred-name": "<anonymous-schema-3>"
+              },
+              "type": "string"
+            }
+          },
+          "$id": "lightMeasured"
+        }
+      },
+      "originalInput": {
+        "_json": {
+          "asyncapi": "2.2.0",
+          "info": {
+            "title": "Streetlights API",
+            "version": "1.0.0",
+            "description": "The Smartylighting Streetlights API allows you\nto remotely manage the city lights.\n",
+            "license": {
+              "name": "Apache 2.0",
+              "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+          },
+          "defaultContentType": "application/json",
+          "servers": {
+            "local": {
+              "url": "localhost:5672",
+              "protocol": "amqp",
+              "security": [
+                {
+                  "user-password": []
+                }
+              ]
+            }
+          },
+          "channels": {
+            "light/measured": {
+              "bindings": {
+                "amqp": {
+                  "is": "routingKey",
+                  "queue": {
+                    "name": "light/measured",
+                    "durable": true,
+                    "exclusive": true,
+                    "autoDelete": false,
+                    "vhost": "/"
+                  },
+                  "bindingVersion": "0.2.0"
+                }
+              },
+              "publish": {
+                "summary": "Inform about environmental lighting conditions for a particular streetlight.",
+                "operationId": "onLightMeasured",
+                "message": {
+                  "name": "LightMeasured",
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Id of the streetlight.",
+                        "x-parser-schema-id": "<anonymous-schema-1>"
+                      },
+                      "lumens": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Light intensity measured in lumens.",
+                        "x-parser-schema-id": "<anonymous-schema-2>"
+                      },
+                      "sentAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time when the message was sent.",
+                        "x-parser-schema-id": "<anonymous-schema-3>"
+                      }
+                    },
+                    "x-parser-schema-id": "lightMeasured"
+                  },
+                  "x-parser-original-schema-format": "application/vnd.aai.asyncapi;version=2.2.0",
+                  "x-parser-original-payload": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Id of the streetlight."
+                      },
+                      "lumens": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Light intensity measured in lumens."
+                      },
+                      "sentAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time when the message was sent."
+                      }
+                    }
+                  },
+                  "schemaFormat": "application/vnd.aai.asyncapi;version=2.2.0",
+                  "x-parser-message-parsed": true
+                }
+              },
+              "subscribe": {
+                "summary": "publishes light measurements",
+                "operationId": "publishLumens",
+                "message": {
+                  "name": "LightMeasured",
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Id of the streetlight.",
+                        "x-parser-schema-id": "<anonymous-schema-1>"
+                      },
+                      "lumens": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Light intensity measured in lumens.",
+                        "x-parser-schema-id": "<anonymous-schema-2>"
+                      },
+                      "sentAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time when the message was sent.",
+                        "x-parser-schema-id": "<anonymous-schema-3>"
+                      }
+                    },
+                    "x-parser-schema-id": "lightMeasured"
+                  },
+                  "x-parser-original-schema-format": "application/vnd.aai.asyncapi;version=2.2.0",
+                  "x-parser-original-payload": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Id of the streetlight."
+                      },
+                      "lumens": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Light intensity measured in lumens."
+                      },
+                      "sentAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time when the message was sent."
+                      }
+                    }
+                  },
+                  "schemaFormat": "application/vnd.aai.asyncapi;version=2.2.0",
+                  "x-parser-message-parsed": true
+                }
+              }
+            }
+          },
+          "components": {
+            "securitySchemes": {
+              "user-password": {
+                "type": "userPassword"
+              }
+            },
+            "messages": {
+              "lightMeasured": {
+                "name": "LightMeasured",
+                "payload": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Id of the streetlight.",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "lumens": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Light intensity measured in lumens.",
+                      "x-parser-schema-id": "<anonymous-schema-2>"
+                    },
+                    "sentAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date and time when the message was sent.",
+                      "x-parser-schema-id": "<anonymous-schema-3>"
+                    }
+                  },
+                  "x-parser-schema-id": "lightMeasured"
+                },
+                "x-parser-original-schema-format": "application/vnd.aai.asyncapi;version=2.2.0",
+                "x-parser-original-payload": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Id of the streetlight."
+                    },
+                    "lumens": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Light intensity measured in lumens."
+                    },
+                    "sentAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date and time when the message was sent."
+                    }
+                  }
+                },
+                "schemaFormat": "application/vnd.aai.asyncapi;version=2.2.0",
+                "x-parser-message-parsed": true
+              }
+            },
+            "schemas": {
+              "lightMeasured": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Id of the streetlight.",
+                    "x-parser-schema-id": "<anonymous-schema-1>"
+                  },
+                  "lumens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Light intensity measured in lumens.",
+                    "x-parser-schema-id": "<anonymous-schema-2>"
+                  },
+                  "sentAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date and time when the message was sent.",
+                    "x-parser-schema-id": "<anonymous-schema-3>"
+                  }
+                },
+                "x-parser-schema-id": "lightMeasured"
+              }
+            }
+          },
+          "x-parser-spec-parsed": true
+        }
+      }
+    },
+    "dependencies": []
+  }
+]
