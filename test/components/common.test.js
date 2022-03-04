@@ -1,10 +1,11 @@
-import { GetProtocolFlags, GetSubscriberFlags, pascalCase } from '../../components/common';
+import { GetProtocolFlags, GetPublisherFlags, GetSubscriberFlags, pascalCase } from '../../components/common';
 import parser from '@asyncapi/parser'
 import fs from 'fs'
 import path from 'path'
 
 const docWithoutProtocols = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutProtocols.yml'), 'utf8');
 const docWithAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPublisher.yml'), 'utf8');
+const docWithAMQPSubscriber = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPSubscriber.yml'), 'utf8');
 const docWithoutAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutAMQPublisher.yml'), 'utf8');
 
 describe('GetProtocolFlags', () => {
@@ -66,6 +67,28 @@ describe('pascalCase', () => {
     const expected = "PS"
 
     const result = pascalCase("pS");
+    expect(result).toEqual(expected);
+  })
+})
+
+describe('GetPublisherFlags', () => {
+
+  it('should return publisherFlags as false when no channels are present ', async function() {
+    const expected = {
+      hasAMQPPub: false
+    };
+
+    const doc = await parser.parse(docWithoutProtocols);
+    const result = GetPublisherFlags(doc);
+    expect(result).toEqual(expected);
+  })
+
+  it('should return publisherFlags as true when subscribe channels are present', async function() {
+    const expected = {
+      hasAMQPPub: true
+    };
+    const doc = await parser.parse(docWithAMQPSubscriber);
+    const result = GetPublisherFlags(doc);
     expect(result).toEqual(expected);
   })
 })
