@@ -1,4 +1,4 @@
-import { GetProtocolFlags, GetPublisherFlags, GetSubscriberFlags, pascalCase } from '../../components/common';
+import { GetProtocolFlags, GetPublisherFlags, GetSubscriberFlags, pascalCase, hasPubOrSub } from '../../components/common';
 import parser from '@asyncapi/parser'
 import fs from 'fs'
 import path from 'path'
@@ -89,6 +89,30 @@ describe('GetPublisherFlags', () => {
     };
     const doc = await parser.parse(docWithAMQPSubscriber);
     const result = GetPublisherFlags(doc);
+    expect(result).toEqual(expected);
+  })
+})
+
+describe('hasPubOrSub', () => {
+
+  it('should return false when no channels are present ', async function() {
+    const expected = false
+    const doc = await parser.parse(docWithoutProtocols);
+    const result = hasPubOrSub(doc);
+    expect(result).toEqual(expected);
+  })
+
+  it('should return true when subscribers are present ', async function() {
+    const expected = true
+    const doc = await parser.parse(docWithAMQPSubscriber);
+    const result = hasPubOrSub(doc);
+    expect(result).toEqual(expected);
+  })
+
+  it('should return true when publishers are present', async function() {
+    const expected = true
+    const doc = await parser.parse(docWithAMQPublisher);
+    const result = hasPubOrSub(doc);
     expect(result).toEqual(expected);
   })
 })

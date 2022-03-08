@@ -28,17 +28,25 @@ export function SubscriptionHandlers({ channels }) {
     }).join('');
 }
 
+export function publishConfigsFrom(channelName, channel) {
+  const msgName = channel.subscribe().message(0).uid();
+  const message = pascalCase(msgName);
+  return {
+    operation: pascalCase(channel.subscribe().id()),
+    message: message,
+    channelName: channelName
+  }
+}
+
 export function PublishHandlers({ channels }) {
   return Object.entries(channels)
     .map(([channelName, channel]) => {
       if (channel.hasSubscribe()) {
-        const operation = pascalCase(channel.subscribe().id());
-        const msgName = channel.subscribe().message(0).uid();
-        const message = pascalCase(msgName);
         //check if it has amqp subscribers
         if (channel.bindings().amqp) {
           //generate amqp publisher
-          return amqpPublisherFunction(channelName, operation, message)
+          const pubConfig = publishConfigsFrom(channelName, channel)
+          return amqpPublisherFunction(pubConfig.channelName, pubConfig.operation, pubConfig.message)
         }
       }
       return '';
@@ -47,7 +55,7 @@ export function PublishHandlers({ channels }) {
 
 const amqpPublisherFunction = (channelName, operation, message) => `
 // ${operation} publish handler for ${channelName}.
-func ${operation}(a *amqp.Publisher, payload ${message}) error {
+func ${operation}(ctx context.Context, a *amqp.Publisher, payload ${message}) error {
 
   m, err := PayloadToMessage(payload)
   if err != nil {
@@ -65,6 +73,7 @@ export function Imports(channels) {
     // console.log(`${key}: ${value}`);
     if (channel.hasPublish()) {
       dependencies.add(`
+  "context"
   "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"`)
     }
