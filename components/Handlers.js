@@ -64,7 +64,6 @@ export function PublishHandlers({ channels }) {
 }
 
 export function Imports(channels) {
-
   const dependencies = new Set();
   for (const [, channel] of Object.entries(channels)) {
     if (channel.hasPublish()) {
