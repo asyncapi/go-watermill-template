@@ -2,15 +2,13 @@ import { File } from '@asyncapi/generator-react-sdk';
 import { GetSubscriberFlags, GetPublisherFlags, hasPubOrSub, hasSub} from '../components/common';
 import { publishConfigsFrom } from '../components/Handlers';
 
-
 function getAMQPPublishFn(channels) {
   return Object.entries(channels)
-  .map(([channelName, channel]) => {
-    if (channel.hasSubscribe()) {
-      if (channel.bindings().amqp) {
+    .map(([channelName, channel]) => {
+      if (channel.hasSubscribe() && channel.bindings().amqp) {
         //generate publisher
-        const pubConfig = publishConfigsFrom(channelName, channel)
-        const msgName = pubConfig.message.toLowerCase()
+        const pubConfig = publishConfigsFrom(channelName, channel);
+        const msgName = pubConfig.message.toLowerCase();
         return `
   var ${msgName} asyncapi.${pubConfig.message}
   //constrcut your message here
@@ -18,13 +16,10 @@ function getAMQPPublishFn(channels) {
   if err != nil {
     return err
   }
-      `
+      `;
       }
-
-    }
-  }).join('')
+    }).join('');
 }
-
 
 function renderStartAMQPPublishers(channels) {
   return `
@@ -64,20 +59,20 @@ function renderSubscribers (subscriberFlags) {
   if err != nil {
     log.Fatalf("error starting amqp subscribers: %s", err)
   }
-    `
+    `;
   }
 
   subscriberConfig += `
   if err = router.Run(ctx); err != nil {
     log.Fatalf("error running watermill router: %s", err)
   }
-  `
+  `;
 
-  return subscriberConfig
+  return subscriberConfig;
 }
 
 function renderPublishers (publisherFlags) {
-  let publisherConfig = ''
+  let publisherConfig = '';
 
   if (publisherFlags.hasAMQPPub) {
     publisherConfig += `
@@ -85,7 +80,7 @@ function renderPublishers (publisherFlags) {
   if err != nil {
     log.Fatalf("error starting amqp publishers: %s", err)
   }
-    `
+    `;
   }
 
   return publisherConfig;
@@ -100,19 +95,19 @@ import (
   "os/signal"
   "syscall"
   "${moduleName}/asyncapi"
-`
+`;
 
   if (hasSub(doc)) {
     imports += `
   "github.com/ThreeDotsLabs/watermill/message"
-    `
+    `;
   }
 
   imports += `
 )
-  `
+  `;
 
-  return imports
+  return imports;
 }
 
 /*
@@ -127,7 +122,6 @@ import (
  * Notice that you can pass parameters to components. In fact, underneath, each component is a pure Javascript function.
  */
 export default function({ asyncapi, params }) {
-
   const informativeErrMsg = `
     Since there are no supported channels in the asyncapi document there is no code to output
     Currently supported channels are:
@@ -136,7 +130,7 @@ export default function({ asyncapi, params }) {
   `;
   //if there are no supported channels do nothing
   if (!hasPubOrSub(asyncapi)) {
-    console.log(`${informativeErrMsg}`)
+    console.log(`${informativeErrMsg}`);
     return;
   }
 

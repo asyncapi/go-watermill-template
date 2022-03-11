@@ -24,7 +24,7 @@ export function SubscriptionHandlers({ channels }) {
         const message = pascalCase(msgName);
         return subscriptionFunction(channelName, operation, message);
       }
-      return ''
+      return '';
     }).join('');
 }
 
@@ -33,24 +33,9 @@ export function publishConfigsFrom(channelName, channel) {
   const message = pascalCase(msgName);
   return {
     operation: pascalCase(channel.subscribe().id()),
-    message: message,
-    channelName: channelName
-  }
-}
-
-export function PublishHandlers({ channels }) {
-  return Object.entries(channels)
-    .map(([channelName, channel]) => {
-      if (channel.hasSubscribe()) {
-        //check if it has amqp subscribers
-        if (channel.bindings().amqp) {
-          //generate amqp publisher
-          const pubConfig = publishConfigsFrom(channelName, channel)
-          return amqpPublisherFunction(pubConfig.channelName, pubConfig.operation, pubConfig.message)
-        }
-      }
-      return '';
-    }).join('');
+    message,
+    channelName
+  };
 }
 
 const amqpPublisherFunction = (channelName, operation, message) => `
@@ -66,29 +51,37 @@ func ${operation}(ctx context.Context, a *amqp.Publisher, payload ${message}) er
 }
 `;
 
+export function PublishHandlers({ channels }) {
+  return Object.entries(channels)
+    .map(([channelName, channel]) => {
+      if (channel.hasSubscribe() && channel.bindings().amqp) {
+        //generate amqp publisher
+        const pubConfig = publishConfigsFrom(channelName, channel);
+        return amqpPublisherFunction(pubConfig.channelName, pubConfig.operation, pubConfig.message);
+      }
+      return '';
+    }).join('');
+}
+
 export function Imports(channels) {
   // console.log(JSON.stringify(channels))
-  let dependencies = new Set()
-  for (const [channelName, channel] of Object.entries(channels)) {
+  const dependencies = new Set();
+  for (const [, channel] of Object.entries(channels)) {
     // console.log(`${key}: ${value}`);
     if (channel.hasPublish()) {
       dependencies.add(`
   "context"
   "encoding/json"
-  "github.com/ThreeDotsLabs/watermill/message"`)
+  "github.com/ThreeDotsLabs/watermill/message"`);
     }
 
-    if (channel.hasSubscribe()) {
-      if (channel.bindings().amqp) {
-        dependencies.add(`
-  "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"`)
-      }
+    if (channel.hasSubscribe() && channel.bindings().amqp) {
+      dependencies.add(`
+  "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"`);
     }
   }
-  return [...dependencies].join('\n')
+  return [...dependencies].join('\n');
 }
-
-
 
 export function Handlers({channels}) {
   return `

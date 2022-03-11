@@ -23,9 +23,9 @@ export default async function({ asyncapi }) {
 
     "github.com/ThreeDotsLabs/watermill/message"
   )
-  `
+  `;
 
-  let payloadUtils = `
+  const payloadUtils = `
 
 // PayloadToMessage converts a payload to watermill message
 func PayloadToMessage(i interface{}) (message.Message, error) {
@@ -48,7 +48,7 @@ func PayloadToMessage(i interface{}) (message.Message, error) {
     `;
   });
 
-  payloadContent += payloadUtils
+  payloadContent += payloadUtils;
 
   return (
     <File name="payloads.go">

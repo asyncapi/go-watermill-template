@@ -91,27 +91,27 @@ export function GetPublisherFlags(asyncapi) {
 }
 
 export function hasPubOrSub(asyncapi) {
-  return hasPub(asyncapi) || hasSub(asyncapi)
+  return hasPub(asyncapi) || hasSub(asyncapi);
 }
 
 export function hasSub(asyncapi) {
-  const subscriberFlags = GetSubscriberFlags(asyncapi)
+  const subscriberFlags = GetSubscriberFlags(asyncapi);
   for (const protocol in subscriberFlags) {
-    if (subscriberFlags[protocol] === true) {
-      return true
+    if (subscriberFlags[`${protocol}`] === true) {
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 export function hasPub(asyncapi) {
-  const publisherFlags = GetPublisherFlags(asyncapi)
+  const publisherFlags = GetPublisherFlags(asyncapi);
   for (const protocol in publisherFlags) {
-    if (publisherFlags[protocol] === true) {
-      return true
+    if (publisherFlags[`${protocol}`] === true) {
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 export function pascalCase(string) {
