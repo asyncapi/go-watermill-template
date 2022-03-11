@@ -64,10 +64,9 @@ export function PublishHandlers({ channels }) {
 }
 
 export function Imports(channels) {
-  // console.log(JSON.stringify(channels))
+
   const dependencies = new Set();
   for (const [, channel] of Object.entries(channels)) {
-    // console.log(`${key}: ${value}`);
     if (channel.hasPublish()) {
       dependencies.add(`
   "context"
