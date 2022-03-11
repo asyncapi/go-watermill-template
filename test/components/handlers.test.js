@@ -55,7 +55,7 @@ describe('PublishHandlers', () => {
   it('should return publish handler functions', async function() {
     const expected = `
 // LumenPublish publish handler for light/measured.
-func LumenPublish(a *amqp.Publisher, payload LightMeasured) error {
+func LumenPublish(ctx context.Context, a *amqp.Publisher, payload LightMeasured) error {
 
   m, err := PayloadToMessage(payload)
   if err != nil {
@@ -66,7 +66,7 @@ func LumenPublish(a *amqp.Publisher, payload LightMeasured) error {
 }
 
 // TempPublish publish handler for temp/measured.
-func TempPublish(a *amqp.Publisher, payload TempMeasured) error {
+func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) error {
 
   m, err := PayloadToMessage(payload)
   if err != nil {
@@ -85,7 +85,8 @@ func TempPublish(a *amqp.Publisher, payload TempMeasured) error {
 describe('Imports', () => {
   it('should return imports for subscribers', async function() {
     const expected = `
-    "encoding/json"
+  "context"
+  "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"
     `
     const doc = await parser.parse(docWithAMQPublisher);
