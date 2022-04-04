@@ -85,7 +85,6 @@ func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) e
 describe('Imports', () => {
   it('should return imports for subscribers', async function() {
     const expected = `
-  "context"
   "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"
     `
@@ -96,7 +95,8 @@ describe('Imports', () => {
 
   it('should return imports for publishers', async function() {
     const expected = `
-    "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
+  "context"
+  "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
     `
     const doc = await parser.parse(docWithAMQPSubscriber)
     const result = Imports(doc.channels())

@@ -68,13 +68,13 @@ export function Imports(channels) {
   for (const [, channel] of Object.entries(channels)) {
     if (channel.hasPublish()) {
       dependencies.add(`
-  "context"
   "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"`);
     }
 
     if (channel.hasSubscribe() && channel.bindings().amqp) {
       dependencies.add(`
+  "context"
   "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"`);
     }
   }

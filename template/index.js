@@ -152,7 +152,7 @@ func main() {
   ${subscriberFlags.hasAMQPSub ? renderSubscribers(subscriberFlags) : ''}
 }
 
-${renderStartAMQPPublishers(asyncapi.channels())}
+${publisherFlags.hasAMQPPub ? renderStartAMQPPublishers(asyncapi.channels()): ''}
 ${subscriberFlags.hasAMQPSub ? renderStartAMQPSubscribers(): ''}
 
 `}
