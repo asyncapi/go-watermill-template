@@ -23,7 +23,7 @@ function getAMQPPublishFn(channels) {
 
 function renderStartAMQPPublishers(channels) {
   return `
-func startAMQPPublishers(ctx context.Context) error {
+func doAMQPPublish(ctx context.Context) error {
   amqpPub, err := asyncapi.GetAMQPPublisher(asyncapi.GetAMQPURI())
   if err != nil {
     return err
@@ -79,9 +79,9 @@ function renderPublishers (publisherFlags) {
 
   if (publisherFlags.hasAMQPPub) {
     publisherConfig += `
-  err := startAMQPPublishers(ctx)
+  err := doAMQPPublish(ctx)
   if err != nil {
-    log.Fatalf("error starting amqp publishers: %s", err)
+    log.Fatalf("error publishing to amqp: %s", err)
   }
     `;
   }
