@@ -62,7 +62,7 @@ func LumenPublish(ctx context.Context, a *amqp.Publisher, payload LightMeasured)
       log.Fatalf("error converting payload: %+v to message error: %s", payload, err)
   }
 
-  return a.Publish("light/measured", &m)
+  return a.Publish("light/measured", m)
 }
 
 // TempPublish publish handler for temp/measured.
@@ -73,7 +73,7 @@ func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) e
       log.Fatalf("error converting payload: %+v to message error: %s", payload, err)
   }
 
-  return a.Publish("temp/measured", &m)
+  return a.Publish("temp/measured", m)
 }
     `
     const doc = await parser.parse(docWithAMQPSubscriber);

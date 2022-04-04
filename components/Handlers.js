@@ -47,7 +47,7 @@ func ${operation}(ctx context.Context, a *amqp.Publisher, payload ${message}) er
       log.Fatalf("error converting payload: %+v to message error: %s", payload, err)
   }
 
-  return a.Publish("${channelName}", &m)
+  return a.Publish("${channelName}", m)
 }
 `;
 

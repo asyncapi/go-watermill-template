@@ -11,7 +11,7 @@ function getAMQPPublishFn(channels) {
         const msgName = pubConfig.message.toLowerCase();
         return `
   var ${msgName} asyncapi.${pubConfig.message}
-  //constrcut your message here
+  //construct your message here
   err = asyncapi.${pubConfig.operation}(ctx, amqpPub, ${msgName})
   if err != nil {
     return err
@@ -25,6 +25,9 @@ function renderStartAMQPPublishers(channels) {
   return `
 func startAMQPPublishers(ctx context.Context) error {
   amqpPub, err := asyncapi.GetAMQPPublisher(asyncapi.GetAMQPURI())
+  if err != nil {
+    return err
+  }
   ${getAMQPPublishFn(channels)}
   return nil
 }
