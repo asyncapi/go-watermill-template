@@ -39,9 +39,8 @@ export function publishConfigsFrom(channelName, channel) {
 }
 
 const amqpPublisherFunction = (channelName, operation, message) => `
-// ${operation} publish handler for ${channelName}.
+// ${operation} is the publish handler for ${channelName}.
 func ${operation}(ctx context.Context, a *amqp.Publisher, payload ${message}) error {
-
   m, err := PayloadToMessage(payload)
   if err != nil {
       log.Fatalf("error converting payload: %+v to message error: %s", payload, err)
