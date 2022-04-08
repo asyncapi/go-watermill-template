@@ -10,7 +10,7 @@
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:assets": "npm run generate:readme:toc",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION",
-    "devTest": "ag test/asyncapi.yaml ./ -o output --force-write",
+    "dev": "rm -rf output && ag test/asyncapi.yaml ./ -o output --force-write",
     "test:components": "jest --coverage ./test/components"
   },
   "repository": {
