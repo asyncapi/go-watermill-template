@@ -1,9 +1,22 @@
+[![AsyncAPI logo](./assets/github-repobanner-generic.png)](https://www.asyncapi.com)
+<!-- toc is generated with GitHub Actions do not remove toc markers -->
+
+<!-- toc -->
+
 - [Overview](#overview)
+- [Template Output](#template-output)
 - [Technical requirements](#technical-requirements)
 - [Supported protocols](#supported-protocols)
 - [How to use the template](#how-to-use-the-template)
   * [CLI](#cli)
+    + [Run the following command to generate a Go module](#run-the-following-command-to-generate-a-go-module)
+    + [How to use the generated code](#how-to-use-the-generated-code)
+      - [Pre-requisites](#pre-requisites)
+      - [Running the code](#running-the-code)
 - [Template configuration](#template-configuration)
+- [Contribution guide](#contribution-guide)
+
+<!-- tocstop -->
 
 
 ## Overview
@@ -126,4 +139,4 @@ You can configure this template by passing different parameters in the Generator
 
 ## Contribution guide
 
-If you are interested in contributing to this repo refer to the [contributing](./docs/contributing.md) docs
+If you are interested in contributing to this repo refer to the [contributing](https://github.com/asyncapi/go-watermill-template/docs/contributing.md) docs
