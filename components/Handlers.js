@@ -20,6 +20,10 @@ export function SubscriptionHandlers({ channels }) {
     .map(([channelName, channel]) => {
       if (channel.hasPublish()) {
         const operation = pascalCase(channel.publish().id());
+        if (!operation) {
+          throw new Error('This template requires operationId to be set for every operation.');
+        }
+
         const msgName = channel.publish().message(0).uid();
         const message = pascalCase(msgName);
         return subscriptionFunction(channelName, operation, message);
@@ -31,8 +35,12 @@ export function SubscriptionHandlers({ channels }) {
 export function publishConfigsFrom(channelName, channel) {
   const msgName = channel.subscribe().message(0).uid();
   const message = pascalCase(msgName);
+  const operation = pascalCase(channel.subscribe().id());
+  if (!operation) {
+    throw new Error('This template requires operationId to be set for every operation.');
+  }
   return {
-    operation: pascalCase(channel.subscribe().id()),
+    operation,
     message,
     channelName
   };

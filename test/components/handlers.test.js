@@ -7,6 +7,7 @@ import path from 'path'
 const docWithAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPublisher.yml'), 'utf8');
 const docWithoutAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutAMQPublisher.yml'), 'utf8');
 const docWithAMQPSubscriber = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPSubscriber.yml'), 'utf8');
+const docWithoutOperationIds = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutOperationIds.yml'), 'utf8');
 
 describe('SubscriptionHandlers', () => {
 
@@ -48,6 +49,13 @@ func OnTempMeasured(msg *message.Message) error {
     expect(result).toEqual('');
   })
 
+  it('should throw an error when operationId is not defined', async function() {
+    const doc = await parser.parse(docWithoutOperationIds);
+    expect(() => {
+      render(<SubscriptionHandlers channels={doc.channels()} />)
+    }).toThrow("This template requires operationId to be set for every operation")
+  })
+
 })
 
 describe('PublishHandlers', () => {
@@ -78,6 +86,16 @@ func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) e
     const result = render(<PublishHandlers channels={doc.channels()} />)
     expect(result.trim()).toEqual(expected.trim());
   })
+
+  it('should throw an error when operationId is not defined', async function() {
+    const doc = await parser.parse(docWithoutOperationIds);
+    expect(() => {
+      render(<PublishHandlers channels={doc.channels()} />)
+    }).toThrow("This template requires operationId to be set for every operation")
+  })
+
+
+
 })
 
 describe('Imports', () => {

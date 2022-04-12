@@ -1,0 +1,96 @@
+asyncapi: "2.3.0"
+
+info:
+  title: Accounts Svc - AsyncAPI
+  version: "1.0.0"
+  description: |
+    Accounts Svc uses events for publishing accounts state changes.
+  license:
+    name: Apache 2.0
+    url: "https://www.apache.org/licenses/LICENSE-2.0"
+
+defaultContentType: application/json
+
+servers:
+  local:
+    url: localhost:5672
+    protocol: amqp
+    security:
+      - user-password: []
+
+channels:
+  accounts/AccountDebitDisabled:
+    description: For publishing AccountDebitDisabled events.
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: AccountDebitDisabled
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+    publish:
+      operationId: onAccountDebitDisabled
+      message:
+        $ref: "#/components/messages/AccountDebitDisabled"
+
+  accounts/AccountDebitEnabled:
+    description: For publishing AccountDebitEnabled events.
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: AccountDebitEnabled
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+    publish:
+      operationId: onAccountDebitEnabled
+      message:
+        $ref: "#/components/messages/AccountDebitEnabled"
+
+components:
+  messages:
+    AccountDebitDisabled:
+      name: AccountDebitDisabled
+      headers:
+        type: object
+        properties:
+          eventVersion:
+            type: integer
+            format: int32
+            minimum: 1
+      payload:
+        $id: AccountDebitDisabled
+        additionalProperties: false
+        type: object
+        properties:
+          accountId:
+            type: string
+          reason:
+            type: string
+
+    AccountDebitEnabled:
+      name: AccountDebitEnabled
+      headers:
+        type: object
+        properties:
+          eventVersion:
+            type: integer
+            format: int32
+            minimum: 1
+      payload:
+        $id: AccountDebitEnabled
+        additionalProperties: false
+        type: object
+        properties:
+          accountId:
+            type: string
+          reason:
+            type: string
+
+  securitySchemes:
+    user-password:
+      type: userPassword
