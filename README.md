@@ -6,6 +6,7 @@
 - [Overview](#overview)
 - [Template Output](#template-output)
 - [Technical requirements](#technical-requirements)
+- [Async API Requirements](#async-api-requirements)
 - [Supported protocols](#supported-protocols)
 - [How to use the template](#how-to-use-the-template)
   * [CLI](#cli)
@@ -17,7 +18,6 @@
 - [Contribution guide](#contribution-guide)
 
 <!-- tocstop -->
-
 
 ## Overview
 
