@@ -1,4 +1,4 @@
-asyncapi: '2.1.0'
+asyncapi: '2.3.0'
 
 info:
   title: Streetlights API
@@ -35,26 +35,36 @@ channels:
       summary: Inform about environmental lighting conditions for a particular streetlight.
       operationId: onLightMeasured
       message:
-        name: LightMeasured
-        payload:
-          $id: LightMeasured
-          additionalProperties: false
-          type: object
-          properties:
-            id:
-              type: integer
-              minimum: 0
-              description: Id of the streetlight.
-            lumens:
-              type: integer
-              minimum: 0
-              description: Light intensity measured in lumens.
-            sentAt:
-              type: string
-              format: date-time
-              description: Date and time when the message was sent.
+        $ref: '#/components/messages/lightMeasured'
+    subscribe:
+      summary: publishes light measurements
+      operationId: publishLumens
+      message:
+        $ref: '#/components/messages/lightMeasured'
 
 components:
   securitySchemes:
     user-password:
       type: userPassword
+  messages:
+    lightMeasured:
+      name: LightMeasured
+      payload:
+        $ref: "#/components/schemas/lightMeasured"
+
+  schemas:
+    lightMeasured:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+          description: Id of the streetlight.
+        lumens:
+          type: integer
+          minimum: 0
+          description: Light intensity measured in lumens.
+        sentAt:
+          type: string
+          format: date-time
+          description: Date and time when the message was sent.

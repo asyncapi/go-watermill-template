@@ -31,9 +31,8 @@ channels:
           autoDelete: false
           vhost: /
         bindingVersion: 0.2.0
-    publish:
-      summary: Inform about environmental lighting conditions for a particular streetlight.
-      operationId: onLightMeasured
+    subscribe:
+      operationId: LumenPublish
       message:
         name: LightMeasured
         payload:
@@ -64,8 +63,8 @@ channels:
           autoDelete: false
           vhost: /
         bindingVersion: 0.2.0
-    publish:
-      operationId: onTempMeasured
+    subscribe:
+      operationId: TempPublish
       message:
         name: TempMeasured
         payload:
