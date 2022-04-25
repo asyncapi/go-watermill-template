@@ -1,4 +1,4 @@
-[![AsyncAPI logo](./assets/github-repobanner-generic.png)](https://www.asyncapi.com)
+[![AsyncAPI logo](./assets/logo_banner.png)](https://www.asyncapi.com)
 <!-- toc is generated with GitHub Actions do not remove toc markers -->
 
 <!-- toc -->
