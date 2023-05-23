@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/go-watermill-template",
-  "version": "0.2.24",
+  "version": "0.2.25",
   "description": "Template for generating Go module based on async api",
   "main": "index.js",
   "scripts": {
