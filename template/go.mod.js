@@ -3,33 +3,30 @@ import { GetProtocolFlags } from '../components/common';
 
 export default function({ asyncapi, params }) {
   const protocolFlags = GetProtocolFlags(asyncapi);
-  const module = [];
-  let dependencies = '';
-
-  if (!protocolFlags.hasAMQP) {
-    return;
-  }
+  const modules = ['github.com/ThreeDotsLabs/watermill v1.1.1'];
+  const goVersion = params.goVersion || '1.16';
 
   if (protocolFlags.hasAMQP) {
-    module.push('github.com/ThreeDotsLabs/watermill-amqp v1.1.2');
+    modules.push('github.com/ThreeDotsLabs/watermill-amqp v1.1.2');
   }
 
-  if (module.length > 0) {
-    dependencies = module.join('\n');
+  if (protocolFlags.hasKafka) {
+    modules.push('github.com/ThreeDotsLabs/watermill-kafka v1.1.2');
   }
+
+  const dependencies = modules.sort().join('\n');
 
   return (
     <File name="go.mod">
       {`
 module ${params.moduleName}
 
-go 1.16
+go ${goVersion}
 
 require (
-  github.com/ThreeDotsLabs/watermill v1.1.1
   ${dependencies}
 )
-  `}
+      `}
     </File>
   );
 }
