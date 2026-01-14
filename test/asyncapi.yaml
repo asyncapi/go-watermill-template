@@ -34,13 +34,21 @@ channels:
     publish:
       summary: Inform about environmental lighting conditions for a particular streetlight.
       operationId: onLightMeasured
+      tags:
+        - name: measurement
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
       summary: publishes light measurements
       operationId: publishLumens
+      tags:
+        - name: measurement
       message:
         $ref: '#/components/messages/lightMeasured'
+
+tags:
+  - name: measurement
+    description: Operations related to measurements
 
 components:
   securitySchemes:

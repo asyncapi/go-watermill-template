@@ -7,5 +7,6 @@ node_modules/*
 # Generated AsyncAPI output
 test/output/*
 output/*
+generated/*
 .DS_Store
 __transpiled
