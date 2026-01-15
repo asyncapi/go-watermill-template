@@ -1,4 +1,4 @@
-import { SubscriptionHandlers, PublishHandlers, Imports} from '../../components/Handlers';
+import { SubscriptionHandlers, PublishHandlers, Imports } from '../../components/Handlers';
 import { render } from '@asyncapi/generator-react-sdk';
 import parser from '@asyncapi/parser'
 import fs from 'fs'
@@ -8,10 +8,12 @@ const docWithAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/do
 const docWithoutAMQPublisher = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutAMQPublisher.yml'), 'utf8');
 const docWithAMQPSubscriber = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPSubscriber.yml'), 'utf8');
 const docWithoutOperationIds = fs.readFileSync(path.resolve(__dirname, '../files/docWithoutOperationIds.yml'), 'utf8');
+const docWithAMQPublisherV3 = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPublisherV3.yml'), 'utf8');
+const docWithAMQPSubscriberV3 = fs.readFileSync(path.resolve(__dirname, '../files/docWithAMQPSubscriberV3.yml'), 'utf8');
 
 describe('SubscriptionHandlers', () => {
 
-  it('should return a subscription handler function', async function() {
+  it('should return a subscription handler function', async function () {
     const expected = `
 // OnLightMeasured subscription handler for light/measured.
 func OnLightMeasured(msg *message.Message) error {
@@ -39,20 +41,20 @@ func OnTempMeasured(msg *message.Message) error {
     `
 
     const doc = await parser.parse(docWithAMQPublisher);
-    const result = render(<SubscriptionHandlers channels={doc.channels()} />)
+    const result = render(<SubscriptionHandlers channels={doc.channels()} asyncapi={doc} />)
     expect(result.trim()).toEqual(expected.trim());
   })
 
-  it('should not return anything when there are no publishers', async function() {
+  it('should not return anything when there are no publishers', async function () {
     const doc = await parser.parse(docWithoutAMQPublisher);
-    const result = render(<SubscriptionHandlers channels={doc.channels()} />)
+    const result = render(<SubscriptionHandlers channels={doc.channels()} asyncapi={doc} />)
     expect(result).toEqual('');
   })
 
-  it('should throw an error when operationId is not defined', async function() {
+  it('should throw an error when operationId is not defined', async function () {
     const doc = await parser.parse(docWithoutOperationIds);
     expect(() => {
-      render(<SubscriptionHandlers channels={doc.channels()} />)
+      render(<SubscriptionHandlers channels={doc.channels()} asyncapi={doc} />)
     }).toThrow("This template requires operationId to be set for every operation")
   })
 
@@ -60,7 +62,7 @@ func OnTempMeasured(msg *message.Message) error {
 
 describe('PublishHandlers', () => {
 
-  it('should return publish handler functions', async function() {
+  it('should return publish handler functions', async function () {
     const expected = `
 // LumenPublish is the publish handler for light/measured.
 func LumenPublish(ctx context.Context, a *amqp.Publisher, payload LightMeasured) error {
@@ -83,14 +85,14 @@ func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) e
 }
     `
     const doc = await parser.parse(docWithAMQPSubscriber);
-    const result = render(<PublishHandlers channels={doc.channels()} />)
+    const result = render(<PublishHandlers channels={doc.channels()} asyncapi={doc} />)
     expect(result.trim()).toEqual(expected.trim());
   })
 
-  it('should throw an error when operationId is not defined', async function() {
+  it('should throw an error when operationId is not defined', async function () {
     const doc = await parser.parse(docWithoutOperationIds);
     expect(() => {
-      render(<PublishHandlers channels={doc.channels()} />)
+      render(<PublishHandlers channels={doc.channels()} asyncapi={doc} />)
     }).toThrow("This template requires operationId to be set for every operation")
   })
 
@@ -99,23 +101,23 @@ func TempPublish(ctx context.Context, a *amqp.Publisher, payload TempMeasured) e
 })
 
 describe('Imports', () => {
-  it('should return imports for subscribers', async function() {
+  it('should return imports for subscribers', async function () {
     const expected = `
   "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"
     `
     const doc = await parser.parse(docWithAMQPublisher);
-    const result = Imports(doc.channels())
+    const result = Imports(doc.channels(), doc)
     expect(result.trim()).toEqual(expected.trim())
   })
 
-  it('should return imports for publishers', async function() {
+  it('should return imports for publishers', async function () {
     const expected = `
   "context"
   "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
     `
     const doc = await parser.parse(docWithAMQPSubscriber)
-    const result = Imports(doc.channels())
+    const result = Imports(doc.channels(), doc)
     expect(result.trim()).toEqual(expected.trim())
   })
 })

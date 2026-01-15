@@ -1,0 +1,44 @@
+run:
+  # Timeout for analysis
+  timeout: 5m
+  
+  # Directories to skip during linting
+  skip-dirs:
+    - generated/vendor
+    - vendor
+    - node_modules
+  
+  # Files to skip during linting
+  skip-files:
+    - ".*\\.pb\\.go$"
+    - ".*_gen\\.go$"
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - unused
+
+linters-settings:
+  govet:
+    # Enable all analyzers
+    enable-all: true
+  
+  staticcheck:
+    # Enable all checks
+    checks: ["all"]
+
+issues:
+  # Exclude issues from vendored code
+  exclude-dirs:
+    - generated/vendor
+    - vendor
+  
+  # Maximum issues count per one linter
+  max-issues-per-linter: 0
+  
+  # Maximum count of issues with the same text
+  max-same-issues: 0

@@ -1,5 +1,5 @@
 import { render } from '@asyncapi/generator-react-sdk';
-import { pascalCase } from './common';
+import { pascalCase, hasPublishCompat, hasSubscribeCompat, getPublishOperationCompat, getSubscribeOperationCompat } from './common';
 
 const subscriptionFunction = (channelName, operation, message) => `
 // ${operation} subscription handler for ${channelName}.
@@ -15,16 +15,17 @@ func ${operation}(msg *message.Message) error {
 }
 `;
 
-export function SubscriptionHandlers({ channels }) {
+export function SubscriptionHandlers({ channels, asyncapi }) {
   return Object.entries(channels)
     .map(([channelName, channel]) => {
-      if (channel.hasPublish()) {
-        const operation = pascalCase(channel.publish().id());
+      if (hasPublishCompat(channel, asyncapi)) {
+        const publishOp = getPublishOperationCompat(channel, asyncapi);
+        const operation = pascalCase(publishOp.id());
         if (!operation) {
           throw new Error('This template requires operationId to be set for every operation.');
         }
 
-        const msgName = channel.publish().message(0).uid();
+        const msgName = publishOp.message(0).uid();
         const message = pascalCase(msgName);
         return subscriptionFunction(channelName, operation, message);
       }
@@ -32,10 +33,11 @@ export function SubscriptionHandlers({ channels }) {
     }).join('');
 }
 
-export function publishConfigsFrom(channelName, channel) {
-  const msgName = channel.subscribe().message(0).uid();
+export function publishConfigsFrom(channelName, channel, asyncapi) {
+  const subscribeOp = getSubscribeOperationCompat(channel, asyncapi);
+  const msgName = subscribeOp.message(0).uid();
   const message = pascalCase(msgName);
-  const operation = pascalCase(channel.subscribe().id());
+  const operation = pascalCase(subscribeOp.id());
   if (!operation) {
     throw new Error('This template requires operationId to be set for every operation.');
   }
@@ -58,28 +60,28 @@ func ${operation}(ctx context.Context, a *amqp.Publisher, payload ${message}) er
 }
 `;
 
-export function PublishHandlers({ channels }) {
+export function PublishHandlers({ channels, asyncapi }) {
   return Object.entries(channels)
     .map(([channelName, channel]) => {
-      if (channel.hasSubscribe() && channel.bindings().amqp) {
+      if (hasSubscribeCompat(channel, asyncapi) && channel.bindings().amqp) {
         //generate amqp publisher
-        const pubConfig = publishConfigsFrom(channelName, channel);
+        const pubConfig = publishConfigsFrom(channelName, channel, asyncapi);
         return amqpPublisherFunction(pubConfig.channelName, pubConfig.operation, pubConfig.message);
       }
       return '';
     }).join('');
 }
 
-export function Imports(channels) {
+export function Imports(channels, asyncapi) {
   const dependencies = new Set();
   for (const [, channel] of Object.entries(channels)) {
-    if (channel.hasPublish()) {
+    if (hasPublishCompat(channel, asyncapi)) {
       dependencies.add(`
   "encoding/json"
   "github.com/ThreeDotsLabs/watermill/message"`);
     }
 
-    if (channel.hasSubscribe() && channel.bindings().amqp) {
+    if (hasSubscribeCompat(channel, asyncapi) && channel.bindings().amqp) {
       dependencies.add(`
   "context"
   "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"`);
@@ -88,15 +90,15 @@ export function Imports(channels) {
   return [...dependencies].join('\n');
 }
 
-export function Handlers({channels}) {
+export function Handlers({ channels, asyncapi }) {
   return `
 package asyncapi
 
 import (
 	"log"
-  ${Imports(channels)}
+  ${Imports(channels, asyncapi)}
 )
-${render(<SubscriptionHandlers channels={channels} />)}
-${render(<PublishHandlers channels={channels} />)}
+${render(<SubscriptionHandlers channels={channels} asyncapi={asyncapi} />)}
+${render(<PublishHandlers channels={channels} asyncapi={asyncapi} />)}
 `;
 }

@@ -1,0 +1,101 @@
+asyncapi: '3.0.0'
+
+info:
+  title: Streetlights API
+  version: '1.0.0'
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+
+defaultContentType: application/json
+
+servers:
+  local:
+    host: localhost:5672
+    protocol: amqp
+    security:
+      - $ref: '#/components/securitySchemes/user-password'
+
+channels:
+  lightMeasured:
+    address: light/measured
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: light/measured
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.2.0
+    messages:
+      lightMeasured:
+        $ref: '#/components/messages/lightMeasured'
+  tempMeasured:
+    address: temp/measured
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: temp/measured
+          durable: true
+          exclusive: true
+          autoDelete: false
+          vhost: /
+        bindingVersion: 0.2.0
+    messages:
+      tempMeasured:
+        $ref: '#/components/messages/tempMeasured'
+
+operations:
+  onLightMeasured:
+    action: receive
+    channel:
+      $ref: '#/channels/lightMeasured'
+    messages:
+      - $ref: '#/channels/lightMeasured/messages/lightMeasured'
+  onTempMeasured:
+    action: receive
+    channel:
+      $ref: '#/channels/tempMeasured'
+    messages:
+      - $ref: '#/channels/tempMeasured/messages/tempMeasured'
+
+components:
+  securitySchemes:
+    user-password:
+      type: userPassword
+  messages:
+    lightMeasured:
+      name: LightMeasured
+      payload:
+        $id: LightMeasured
+        additionalProperties: false
+        type: object
+        properties:
+          id:
+            type: integer
+            minimum: 0
+            description: Id of the streetlight.
+          lumens:
+            type: integer
+            minimum: 0
+            description: Light intensity measured in lumens.
+          sentAt:
+            type: string
+            format: date-time
+            description: Date and time when the message was sent.
+    tempMeasured:
+      name: TempMeasured
+      payload:
+        $id: TempMeasured
+        additionalProperties: false
+        type: object
+        properties:
+          temp:
+            type: integer
+            minimum: 0

@@ -1,13 +1,13 @@
 import { File } from '@asyncapi/generator-react-sdk';
-import { GetSubscriberFlags, GetPublisherFlags, hasPubOrSub, hasSub} from '../components/common';
+import { GetSubscriberFlags, GetPublisherFlags, hasPubOrSub, hasSub, hasSubscribeCompat } from '../components/common';
 import { publishConfigsFrom } from '../components/Handlers';
 
-function getAMQPPublishFn(channels) {
+function getAMQPPublishFn(channels, asyncapi) {
   return Object.entries(channels)
     .map(([channelName, channel]) => {
-      if (channel.hasSubscribe() && channel.bindings().amqp) {
+      if (hasSubscribeCompat(channel, asyncapi) && channel.bindings().amqp) {
         //generate publisher
-        const pubConfig = publishConfigsFrom(channelName, channel);
+        const pubConfig = publishConfigsFrom(channelName, channel, asyncapi);
         const msgName = pubConfig.message.toLowerCase();
         return `
   var ${msgName} asyncapi.${pubConfig.message}
@@ -21,14 +21,14 @@ function getAMQPPublishFn(channels) {
     }).join('');
 }
 
-function renderStartAMQPPublishers(channels) {
+function renderStartAMQPPublishers(channels, asyncapi) {
   return `
 func doAMQPPublish(ctx context.Context) error {
   amqpPub, err := asyncapi.GetAMQPPublisher(asyncapi.GetAMQPURI())
   if err != nil {
     return err
   }
-  ${getAMQPPublishFn(channels)}
+  ${getAMQPPublishFn(channels, asyncapi)}
   return nil
 }
   `;
@@ -48,7 +48,7 @@ func startAMQPSubscribers(ctx context.Context, router *message.Router) error {
   `;
 }
 
-function renderSubscribers (subscriberFlags) {
+function renderSubscribers(subscriberFlags) {
   let subscriberConfig = `
   router, err := asyncapi.GetRouter()
   if err != nil {
@@ -74,7 +74,7 @@ function renderSubscribers (subscriberFlags) {
   return subscriberConfig;
 }
 
-function renderPublishers (publisherFlags) {
+function renderPublishers(publisherFlags) {
   let publisherConfig = '';
 
   if (publisherFlags.hasAMQPPub) {
@@ -124,7 +124,7 @@ import (
  *
  * Notice that you can pass parameters to components. In fact, underneath, each component is a pure Javascript function.
  */
-export default function({ asyncapi, params }) {
+export default function ({ asyncapi, params }) {
   const informativeErrMsg = `
     Since there are no supported channels in the asyncapi document there is no code to output
     Currently supported channels are:
@@ -155,8 +155,8 @@ func main() {
   ${subscriberFlags.hasAMQPSub ? renderSubscribers(subscriberFlags) : ''}
 }
 
-${publisherFlags.hasAMQPPub ? renderStartAMQPPublishers(asyncapi.channels()): ''}
-${subscriberFlags.hasAMQPSub ? renderStartAMQPSubscribers(): ''}
+${publisherFlags.hasAMQPPub ? renderStartAMQPPublishers(asyncapi.channels(), asyncapi) : ''}
+${subscriberFlags.hasAMQPSub ? renderStartAMQPSubscribers() : ''}
 
 `}
     </File>
